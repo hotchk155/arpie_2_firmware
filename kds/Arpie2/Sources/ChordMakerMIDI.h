@@ -14,28 +14,20 @@
 // MIDI input
 /////////////////////////////////////////////////////////////////////////////
 
-#include"ChordMaker.h"
+#include "Definitions.h"
+#include "ArpNote.h"
 
 #define MAX_CHORD_SIZE	12	// maximum number of notes we can have in a chord
 
 
-
-class CChordMakerMIDI :
-		public CChordMaker,
-		public IMidiMessageProcessor
+class CChordMakerMidi :
+		public IMidiMessageListener
 {
-
-	byte m_hold;
-	byte m_held_notes;
-	byte m_chan;
-
-	void remove_note(int index) {
-		delete m_notes[index];
-		for(int j = i; j<m_len-1; ++j) {
-			m_notes[j] = m_notes[j+1];
-		}
-		--m_len;
-	}
+public:
+	enum {
+		MAX_LEN = 12
+	};
+protected:
 
 	typedef struct {
 		byte note;
@@ -43,24 +35,45 @@ class CChordMakerMIDI :
 		byte is_held;
 	} MIDI_NOTE;
 
+	byte m_hold;
+	byte m_held_notes;
+	byte m_chan;
 	MIDI_NOTE m_notes[MAX_LEN];
 	int m_len;
 
-public:
-	enum {
-		MAX_LEN = 12
-	};
+	void remove_note(int index) {
+		for(int j = index; j<m_len-1; ++j) {
+			m_notes[j] = m_notes[j+1];
+		}
+		--m_len;
+	}
 
-	CChordMakerMIDI() {
+	///////////////////////////////////////////////////////
+	void rebuild() {
+		CArpNotes *chord = new CArpNotes();
+		for(int i=0; i<m_len; ++i) {
+			chord->add(new CArpNote(m_notes[i].note, m_notes[i].velocity));
+		}
+		if(m_consumer) {
+			m_consumer->process_sequence(chord);
+		}
+	}
+
+public:
+	IArpSequenceConsumer *m_consumer;
+	CChordMakerMidi() {
+		m_chan = 0;
 		m_hold = 0;
 		m_len = 0;
 		m_held_notes = 0;
+		m_consumer = nullptr;
 	}
 
 
 	///////////////////////////////////////////////////////
 	// IMidiMessageProcessor::on_midi_msg
-	void on_midi_msg(byte status, byte param1, byte param2) {
+	void on_midi_msg(byte status, byte param1, byte param2, byte num_params) {
+		byte need_rebuild = 0;
 		switch(status & 0xF0) {
 		case midi::CH_NOTE_ON:
 			if((m_chan != midi::OMNI) && (status & 0x0F) != m_chan) {
@@ -70,9 +83,10 @@ public:
 				if(!m_held_notes) {
 					m_len = 0;
 				}
-				for(int i=0; i<m_len; ++i) {
-					if(m_notes[i].note == note) {
-						m_notes[i].vel = velocity;
+				int i;
+				for(i=0; i<m_len; ++i) {
+					if(m_notes[i].note == param1) {
+						m_notes[i].velocity = param2;
 						if(!m_notes[i].is_held) {
 							m_notes[i].is_held = 1;
 							++m_held_notes;
@@ -81,19 +95,19 @@ public:
 					}
 				}
 				if(i==m_len && m_len < MAX_LEN) {
-					++m_len;
-					m_notes[m_len].note = note;
-					m_notes[m_len].vel = vel;
+					m_notes[m_len].note = param1;
+					m_notes[m_len].velocity = param2;
 					m_notes[m_len].is_held = 1;
+					++m_len;
 					++m_held_notes;
 				}
-				set_changed();
+				need_rebuild = 1;
 				break;
 			}
 			// else fall through (zero note on velocity = note off)
 		case midi::CH_NOTE_OFF:
 			for(int i=0; i<m_len; ++i) {
-				if(m_notes[i].note == note) {
+				if(m_notes[i].note == param1) {
 					if(m_hold) {
 						if(m_notes[i].is_held) {
 							m_notes[i].is_held = 0;
@@ -104,11 +118,14 @@ public:
 						remove_note(i);
 						--m_held_notes;
 						--i;
-						set_changed();
+						need_rebuild = 1;
 					}
 				}
 			}
 			break;
+		}
+		if(need_rebuild) {
+			rebuild();
 		}
 	}
 
@@ -127,12 +144,12 @@ public:
 		// if hold is being turned off we need to cancel any
 		// notes that are still in the chord but which are
 		// not held in MIDI
-		int do_rebuild = 0;
+		byte need_rebuild = 0;
 		if(m_hold && !hold) {
 			for(int i=0; i<m_len;) {
 				if(!m_notes[i].is_held) {
 					remove_note(i);
-					set_changed();
+					need_rebuild = 1;
 				}
 				else {
 					++i;
@@ -141,6 +158,9 @@ public:
 
 		}
 		m_hold = hold;
+		if(need_rebuild) {
+			rebuild();
+		}
 	}
 
 	///////////////////////////////////////////////////////
@@ -148,14 +168,6 @@ public:
 		return m_hold;
 	}
 
-	///////////////////////////////////////////////////////
-	CArpNotes *get_chord() {
-		CArpNotes *chord = new CArpNotes();
-		for(int i=0; i<m_len; ++i) {
-			chord->add(new CArpNote(m_notes[i].note, m_notes[i].vel));
-		}
-		return chord;
-	}
 };
 
 #endif /* SOURCES_CHORDMAKERMIDI_H_ */
