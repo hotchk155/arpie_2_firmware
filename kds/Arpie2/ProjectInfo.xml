@@ -35,83 +35,85 @@
     <FLASHsize>64k</FLASHsize>
   </PROCESSOR>
   <PATHS>
-    <LinkerCommandFile>C:\dev\kds\Arpie2\Project_Settings\Linker_Files\ProcessorExpert.ld</LinkerCommandFile>
+    <LinkerCommandFile>D:\GitHub\arpie_2_firmware\kds\Arpie2\Project_Settings\Linker_Files\ProcessorExpert.ld</LinkerCommandFile>
     <IncludePaths>
-      <Path>C:\dev\kds\Arpie2\Static_Code\PDD\</Path>
-      <Path>C:\dev\kds\Arpie2\Static_Code\IO_Map\</Path>
-      <Path>C:\dev\kds\Arpie2\Sources\</Path>
-      <Path>C:\dev\kds\Arpie2\Generated_Code\</Path>
+      <Path>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\</Path>
+      <Path>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\IO_Map\</Path>
+      <Path>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\</Path>
+      <Path>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\</Path>
     </IncludePaths>
     <SourceCodePaths>
-      <Path>C:\dev\kds\Arpie2\Generated_Code\</Path>
-      <Path>C:\dev\kds\Arpie2\Project_Settings\Startup_Code\</Path>
-      <Path>C:\dev\kds\Arpie2\Sources\</Path>
+      <Path>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\</Path>
+      <Path>D:\GitHub\arpie_2_firmware\kds\Arpie2\Project_Settings\Startup_Code\</Path>
+      <Path>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\</Path>
     </SourceCodePaths>
   </PATHS>
   <FILES>
     <GeneratedCs>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\Cpu.c</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\FLASH1.c</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\I2CBus.c</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\PE_LDD.c</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\TU1.c</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\UART0.c</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\Vectors.c</PathName>
-      <PathName>C:\dev\kds\Arpie2\Project_Settings\Startup_Code\startup.c</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\Events.c</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\main.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\Cpu.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\FLASH1.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\GPIO1.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\I2CBus.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\PE_LDD.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\TU1.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\UART0.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\Vectors.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Project_Settings\Startup_Code\startup.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Events.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\main.c</PathName>
     </GeneratedCs>
     <GeneratedHs>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\Cpu.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\FLASH1.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\I2CBus.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\IO_Map.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\PE_Const.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\PE_Error.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\PE_LDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\PE_Types.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\TU1.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Generated_Code\UART0.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\ArpNote.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\Arpeggiator.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\ChordExtender.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\ChordMaker.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\ChordMakerMIDI.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\ClockInternal.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\ClockMidi.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\Definitions.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\Events.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\MetronomeBasic.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\Midi.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\MidiInput.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\MidiOutput.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\NoteOutput.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\NoteTamer.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\SequenceMutator.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\SequenceSort.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\Sequencer.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Sources\SequencerBasic.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\IO_Map\MKE02Z4.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\ADC_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\CMP_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\CRC_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\FTMRH_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\FTM_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\GPIO_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\I2C_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\IRQ_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\KBI_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\MCM_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\PDD_Types.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\PIT_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\PMC_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\PORT_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\RTC0_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\SIM_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\SPI_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\SysTick_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\UART_PDD.h</PathName>
-      <PathName>C:\dev\kds\Arpie2\Static_Code\PDD\WDOG_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\Cpu.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\FLASH1.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\GPIO1.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\I2CBus.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\IO_Map.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\PE_Const.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\PE_Error.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\PE_LDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\PE_Types.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\TU1.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\UART0.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ArpNote.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Arpeggiator.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ChordMaker.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ChordMakerMidi.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ClockInternal.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ClockMidi.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Definitions.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Events.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\MetronomeBasic.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Midi.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\MidiInput.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\MidiOutput.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\NoteOutputMidi.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\NoteTamer.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\OctaveExtender.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\SequenceMutator.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\SequenceSort.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Sequencer.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\SequencerBasic.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\IO_Map\MKE02Z4.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\ADC_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\CMP_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\CRC_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\FTMRH_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\FTM_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\GPIO_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\I2C_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\IRQ_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\KBI_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\MCM_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\PDD_Types.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\PIT_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\PMC_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\PORT_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\RTC0_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\SIM_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\SPI_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\SysTick_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\UART_PDD.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\WDOG_PDD.h</PathName>
     </GeneratedHs>
   </FILES>
   <OPTIONS>

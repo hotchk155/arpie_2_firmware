@@ -8,16 +8,18 @@
 #ifndef SOURCES_CLOCKINTERNAL_H_
 #define SOURCES_CLOCKINTERNAL_H_
 
+#include "Definitions.h"
 
 class CClockInternal {
 	double m_bpm;
 	double m_tick_period;
 	double m_next_tick;
 public:
-	CMetronome *m_metronome_1;
-	CMetronome *m_metronome_2;
+
+	IClockListener *m_listener_1;
+	IClockListener *m_listener_2;
 	enum {
-		DEFAULT_BPM = (120<<8),
+		DEFAULT_BPM = 120,
 		MS_PER_MIN = (60 * 1000),
 		TICKS_PQN = 24
 	};
@@ -25,8 +27,9 @@ public:
 		m_bpm = 0;
 		m_tick_period = 0;
 		m_next_tick = 0;
-		m_metronome_1 = nullptr;
-		m_metronome_2 = nullptr;
+		m_listener_1 = nullptr;
+		m_listener_2 = nullptr;
+		set_bpm(DEFAULT_BPM);
 	}
 	void set_bpm(double  bpm) {
 		m_bpm = bpm;
@@ -36,8 +39,13 @@ public:
 		return m_bpm;
 	}
 
-	void init() {
-		set_bpm(DEFAULT_BPM);
+	void start() {
+		if(m_listener_1) {
+			m_listener_1->on_clock_start();
+		}
+		if(m_listener_2) {
+			m_listener_2->on_clock_start();
+		}
 	}
 	/////////////////////////////////////////////////
 	// run the clock - if a 24ppqn tick has occurred
@@ -45,11 +53,14 @@ public:
 	byte run(uint32_t ms) {
 		if(ms >= m_next_tick) {
 			m_next_tick += m_tick_period;
-			if(m_metronome_1) {
-				m_metronome_1->tick();
+			if(ms >= m_next_tick) {
+				m_next_tick = ms + m_tick_period;
 			}
-			if(m_metronome_2) {
-				m_metronome_2->tick();
+			if(m_listener_1) {
+				m_listener_1->on_clock_tick();
+			}
+			if(m_listener_2) {
+				m_listener_2->on_clock_tick();
 			}
 		}
 	}

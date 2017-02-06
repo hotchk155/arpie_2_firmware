@@ -29,7 +29,7 @@ CPP_DEPS += \
 Sources/%.o: ../Sources/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross ARM C++ Compiler'
-	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -I"C:/dev/kds/Arpie2/Static_Code/PDD" -I"C:/dev/kds/Arpie2/Static_Code/IO_Map" -I"C:/dev/kds/Arpie2/Sources" -I"C:/dev/kds/Arpie2/Generated_Code" -std=gnu++11 -fabi-version=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
+	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -I"D:/GitHub/arpie_2_firmware/kds/Arpie2/Static_Code/PDD" -I"D:/GitHub/arpie_2_firmware/kds/Arpie2/Static_Code/IO_Map" -I"D:/GitHub/arpie_2_firmware/kds/Arpie2/Sources" -I"D:/GitHub/arpie_2_firmware/kds/Arpie2/Generated_Code" -std=gnu++11 -fabi-version=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

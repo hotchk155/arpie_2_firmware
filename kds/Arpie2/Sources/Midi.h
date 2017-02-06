@@ -10,8 +10,8 @@
 
 namespace midi {
 enum {
-	CH_NOTE_ON = 0x80,
-	CH_NOTE_OFF = 0x90,
+	CH_NOTE_OFF = 0x80,
+	CH_NOTE_ON = 0x90,
 	CH_POLY_PRESS = 0xA0,
 	CH_CTRL_CHANGE = 0xB0,
 	CH_PROG_CHANGE = 0xC0,

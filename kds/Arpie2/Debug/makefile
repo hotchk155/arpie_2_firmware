@@ -52,7 +52,7 @@ all: jason.elf secondary-outputs
 jason.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM C++ Linker'
-	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -T "C:/dev/kds/Arpie2/Project_Settings/Linker_Files/ProcessorExpert.ld" -Xlinker --gc-sections -L"C:/dev/kds/Arpie2/Project_Settings/Linker_Files" -Wl,-Map,"jason.map" -specs=nano.specs -specs=nosys.specs -o "jason.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-g++ -mcpu=cortex-m0plus -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -T "D:/GitHub/arpie_2_firmware/kds/Arpie2/Project_Settings/Linker_Files/ProcessorExpert.ld" -Xlinker --gc-sections -L"D:/GitHub/arpie_2_firmware/kds/Arpie2/Project_Settings/Linker_Files" -Wl,-Map,"jason.map" -specs=nano.specs -specs=nosys.specs -o "jason.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

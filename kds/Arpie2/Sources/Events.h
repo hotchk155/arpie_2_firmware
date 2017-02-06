@@ -37,6 +37,7 @@
 #include "I2CBus.h"
 #include "FLASH1.h"
 #include "TU1.h"
+#include "GPIO1.h"
 
 #ifdef __cplusplus
 extern "C" {

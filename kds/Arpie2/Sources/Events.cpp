@@ -28,8 +28,7 @@
 
 #include "Cpu.h"
 #include "Events.h"
-#include "Arpeggiator.h"
-extern CArpeggiator *g_arpie;
+#include "Definitions.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -177,12 +176,12 @@ void TU1_OnCounterRestart(LDD_TUserData *UserDataPtr)
 		s_next_keyb_poll = g_millis + KEYBOARD_POLL_RATE;
 	}
     */
-	g_arpie->tick();
+	g_arp->on_tick();
 }
 
 void UART0_OnBlockReceived(LDD_TUserData *UserDataPtr)
 {
-	g_arpie->on_uart0_rx_complete(1);
+	g_arp->on_uart0_rx_complete(1);
 }
 
 void UART0_OnBlockSent(LDD_TUserData *UserDataPtr)

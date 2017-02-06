@@ -42,7 +42,7 @@
 
 /* User includes (#include below this line is not maintained by Processor Expert) */
 #include "Arpeggiator.h"
-CArpeggiator *g_arpie;
+IArpEvents *g_arp = nullptr;
 
 /*lint -save  -e970 Disable MISRA rule (6.3) checking. */
 int main(void)
@@ -50,7 +50,7 @@ int main(void)
 {
   /* Write your local variable definition here */
   CArpeggiator Arpie;
-  g_arpie = &Arpie;
+  g_arp = &Arpie;
 
   /*** Processor Expert internal initialization. DON'T REMOVE THIS CODE!!! ***/
   PE_low_level_init();
@@ -58,9 +58,9 @@ int main(void)
 
   /* Write your code here */
   /* For example: for(;;) { } */
-  g_arpie->init();
+  Arpie.init();
   for(;;) {
-	  g_arpie->run();
+	  Arpie.run();
   }
 
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/

@@ -93,6 +93,7 @@ public:
 			m_fifo[m_head] = m_char;
 			m_head = next;
 		}
+		g_arp->on_event(IArpEvents::RX_DATA,0);
 		listen();
 	}
 

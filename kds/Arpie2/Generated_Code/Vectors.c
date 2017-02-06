@@ -6,7 +6,7 @@
 **     Version     : Component 01.015, Driver 01.04, CPU db: 3.00.000
 **     Repository  : Kinetis
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2017-02-03, 15:03, # CodeGen: 32
+**     Date/Time   : 2017-02-06, 14:26, # CodeGen: 40
 **     Abstract    :
 **
 **     Settings    :
@@ -59,6 +59,7 @@
   #include "I2CBus.h"
   #include "FLASH1.h"
   #include "TU1.h"
+  #include "GPIO1.h"
   #include "Events.h"
 
 

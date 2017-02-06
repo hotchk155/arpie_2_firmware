@@ -27,6 +27,7 @@
 - \subpage I2CBus
 - \subpage FLASH1
 - \subpage TU1
+- \subpage GPIO1
 
 */
 

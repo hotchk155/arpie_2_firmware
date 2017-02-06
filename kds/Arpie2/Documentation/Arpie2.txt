@@ -92,6 +92,25 @@ Module "TU1"       (component TimerUnit_LDD)
                 <Enable> method is not necessary and needn't to be generated. This method can be called only once. Before the 
                 second call of Init the <Deinit> must be called first.
 
+Module "GPIO1"     (component GPIO_LDD)
+   - GPIO1_Init -This method initializes the associated peripheral(s) and the component internal variables. The method is 
+                called automatically as a part of the application initialization code.
+   - GPIO1_SetPortValue -This method writes the output data value to the port. Only configured pins (through all of bit fields 
+                in this component) are affected.
+   - GPIO1_GetPortValue -This method returns the current port input data value. Only configured pins (through all of bit fields 
+                in this component) are returned.
+   - GPIO1_ClearPortBits -This method drives the specified bits of the port to the inactive level. Only configured pins 
+                (through all of bit fields in this component) are affected.
+   - GPIO1_SetPortBits -This method drives the specified bits of the port to the active level. Only configured pins (through 
+                all of bit fields in this component) are affected.
+   - GPIO1_TogglePortBits -This method inverts the specified bits of the port to another level. Only configured pins (through 
+                all of bit fields in this component) are affected.
+   - GPIO1_SetPortInputDirection -This method sets the specified pins of the port to the input direction. Only configured pins 
+                (through all of bit fields in this component) are affected.
+   - GPIO1_SetPortOutputDirection -This method sets the specified pins of the port to the output direction. The specified pins 
+                of the port will be driven to specified states. Only configured pins (through all of bit fields in this 
+                component) are affected.
+
 Module "Cpu"       (component MKE02Z64LC2)
 
 ===================================================================================

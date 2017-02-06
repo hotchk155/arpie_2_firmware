@@ -40,6 +40,7 @@ protected:
 		}
 		if(tx_len > 0) {
 			LDD_TError e = UART0_SendBlock(UART0_DeviceData, m_tx, tx_len);
+			g_arp->on_event(IArpEvents::TX_DATA,0);
 			//TODO error check
 			m_tx_busy = 1;
 		}

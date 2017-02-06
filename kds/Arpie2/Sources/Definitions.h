@@ -31,23 +31,29 @@ public:
 	virtual void on_midi_realtime(byte data) = 0;
 };
 
-class IClockProcessor {
+class IClockListener {
 public:
-	virtual void on_clock_reset() = 0;
 	virtual void on_clock_start() = 0;
 	virtual void on_clock_stop() = 0;
+	virtual void on_clock_continue() = 0;
 	virtual void on_clock_tick() = 0;
 };
 
 class ISequencer {
 public:
-	virtual void step() = 0;
+	virtual void sequencer_start() = 0;
+	virtual void sequencer_stop() = 0;
+	virtual void sequencer_continue() = 0;
+	virtual void sequencer_step() = 0;
 };
 
-class IArpProcessor
+/*
+ * Sequence consumer takes a sequence of notes and takes ownership of it
+ */
+class IArpSequenceConsumer
 {
 public:
-	virtual void process(CArpNotes *notes) = 0;
+	virtual void process_sequence(CArpNotes *notes) = 0;
 };
 
 /*
@@ -55,11 +61,25 @@ public:
  * and processes that note, passing it on or playing it as needed. A note
  * consumer only supports handling one such note at a time
  */
-class IArpNoteProcessor {
+class IArpNoteConsumer {
 public:
-	virtual void start_note(CArpNote *note) = 0;
-	virtual void stop_note() = 0;
+	virtual void note_start(CArpNote *note) = 0;
+	virtual void note_stop() = 0;
 };
+
+
+class IArpEvents {
+public:
+	enum {
+		BEAT,
+		TX_DATA,
+		RX_DATA
+	};
+	virtual void on_tick() = 0;
+	virtual void on_uart0_rx_complete(byte status) = 0;
+	virtual void on_event(int event, int param) = 0;
+};
+extern IArpEvents *g_arp;
 
 
 

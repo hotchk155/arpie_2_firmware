@@ -475,5 +475,85 @@ PE_DEBUGHALT();
       <event name="OnChannel7" v="don&amp;apos;t generate code" />
     </Events>
   </Bean>
+  <Bean name="GPIO1" type="GPIO_LDD">
+    <Enabled v="Y" />
+    <Properties>
+      <Component_name v="GPIO1" />
+      <Port v="GPIOA" />
+      <Port_width v="32 bits" />
+      <Mask_of_allocated_pins v="193" />
+      <boolgroup name="Interrupt service/event" v="Disabled" />
+      <list name="Bit fields" v="3">
+        <group name="Bit field">
+          <Field_name v="BEAT_LED" />
+          <list name="Pins" v="1">
+            <group name="Pin">
+              <Pin v="PTA0/KBI0_P0/FTM0_CH0/ACMP0_IN0/ADC0_SE0" />
+              <boolgroup name="Initial pin direction" v="Input" />
+              <Initial_pin_event v="Disabled" />
+            </group>
+          </list>
+        </group>
+        <group name="Bit field">
+          <Field_name v="RX_LED" />
+          <list name="Pins" v="1">
+            <group name="Pin">
+              <Pin v="PTA6/FTM2_FLT1/ACMP1_IN0/ADC0_SE2" />
+              <boolgroup name="Initial pin direction" v="Output">
+                <Initial_output_state v="0" />
+              </boolgroup>
+              <Initial_pin_event v="Disabled" />
+            </group>
+          </list>
+        </group>
+        <group name="Bit field">
+          <Field_name v="TX_LED" />
+          <list name="Pins" v="1">
+            <group name="Pin">
+              <Pin v="PTA7/FTM2_FLT2/ACMP1_IN1/ADC0_SE3" />
+              <boolgroup name="Initial pin direction" v="Output">
+                <Initial_output_state v="0" />
+              </boolgroup>
+              <Initial_pin_event v="Disabled" />
+            </group>
+          </list>
+        </group>
+      </list>
+      <group name="Initialization">
+        <group name="Event mask">
+          <OnPortEvent v="Disabled" />
+        </group>
+      </group>
+    </Properties>
+    <Methods>
+      <Init v="generate code" />
+      <Deinit v="don&amp;apos;t generate code" />
+      <SetEventMask v="don&amp;apos;t generate code" />
+      <GetEventMask v="don&amp;apos;t generate code" />
+      <SetPortEventCondition v="don&amp;apos;t generate code" />
+      <GetPortEventStatus v="don&amp;apos;t generate code" />
+      <SetPortValue v="generate code" />
+      <GetPortValue v="generate code" />
+      <ClearPortBits v="generate code" />
+      <SetPortBits v="generate code" />
+      <TogglePortBits v="generate code" />
+      <SetPortInputDirection v="generate code" />
+      <SetPortOutputDirection v="generate code" />
+      <SetFieldValue v="don&amp;apos;t generate code" />
+      <GetFieldValue v="don&amp;apos;t generate code" />
+      <ClearFieldBits v="don&amp;apos;t generate code" />
+      <SetFieldBits v="don&amp;apos;t generate code" />
+      <ToggleFieldBits v="don&amp;apos;t generate code" />
+      <SetFieldInputDirection v="don&amp;apos;t generate code" />
+      <SetFieldOutputDirection v="don&amp;apos;t generate code" />
+      <SetOperationMode v="don&amp;apos;t generate code" />
+      <GetDriverState v="don&amp;apos;t generate code" />
+      <ConnectPin v="don&amp;apos;t generate code" />
+    </Methods>
+    <Events>
+      <Event_module_name v="Events" />
+      <event name="OnPortEvent" v="don&amp;apos;t generate code" />
+    </Events>
+  </Bean>
 </PE_PROJECT_SETTINGS_DOCUMENTATION>
 
