@@ -74,25 +74,31 @@
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\PE_Types.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\TU1.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\UART0.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ArpNote.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Arpeggiator.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ChordMaker.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ChordMakerMidi.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ClockInternal.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ClockMidi.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Arpie.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Definitions.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Events.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\MetronomeBasic.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Midi.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\MidiInput.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\MidiOutput.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\NoteOutputMidi.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\NoteTamer.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\OctaveExtender.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\SequenceMutator.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\SequenceSort.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Sequencer.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\SequencerBasic.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\Param.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\ArpNote.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\ChordMakerMidi.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\ClockInternal.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\ClockMidi.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\MetronomeBasic.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\MetronomeBeat.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\NoteOutputMidi.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\NoteTamer.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\OctaveExtender.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\SequenceMutator.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\SequenceSort.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\Sequencer.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\SequencerBasic.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\hal\I2CDriver.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\hal\IndicatorLed.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\hal\Keyboard.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\hal\Midi.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\hal\MidiInput.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\hal\MidiOutput.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ui\UiPage.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\ui\UiParamEdit.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\IO_Map\MKE02Z4.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\ADC_PDD.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Static_Code\PDD\CMP_PDD.h</PathName>

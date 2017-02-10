@@ -5,27 +5,30 @@
  *      Author: Jason
  */
 
-#ifndef SOURCES_ARPEGGIATOR_H_
-#define SOURCES_ARPEGGIATOR_H_
+#ifndef SOURCES_ARPIE_H_
+#define SOURCES_ARPIE_H_
 
-#include "MidiInput.h"
-#include "MidiOutput.h"
-#include "ChordMakerMidi.h"
-#include "OctaveExtender.h"
-#include "NoteOutputMidi.h"
-#include "SequencerBasic.h"
-#include "ClockInternal.h"
-#include "MetronomeBasic.h"
-#include "MetronomeBeat.h"
-#include "IndicatorLed.h"
+#include "hal/MidiInput.h"
+#include "hal/MidiOutput.h"
+#include "hal/IndicatorLed.h"
+#include "hal/I2CDriver.h"
+#include "hal/Keyboard.h"
+#include "arp/ChordMakerMidi.h"
+#include "arp/OctaveExtender.h"
+#include "arp/NoteOutputMidi.h"
+#include "arp/SequencerBasic.h"
+#include "arp/ClockInternal.h"
+#include "arp/MetronomeBasic.h"
+#include "arp/MetronomeBeat.h"
 
-class CArpeggiator : public IArpEvents
+class CArpie : public IArpEvents
 {
 	enum {
 		TX_LED_PERIOD = 10,
 		RX_LED_PERIOD = 10,
 		BEAT_LED_PERIOD = 10
 	};
+	CI2CDriver m_i2c;
 	CMidiInput m_midi_input;
 	CMidiOutput m_midi_output;
 	CChordMakerMidi m_chord_maker;
@@ -38,18 +41,21 @@ class CArpeggiator : public IArpEvents
 	CIndicatorLed m_tx_led;
 	CIndicatorLed m_rx_led;
 	CIndicatorLed m_beat_led;
+	CKeyboard m_keyboard;
 
 	uint32_t m_ms;
+	byte m_tick;
 	int m_tx_led_timeout;
 	int m_rx_led_timeout;
 	int m_beat_led_timeout;
 public:
-	CArpeggiator() :
+	CArpie() :
 		m_tx_led(GPIO1_TX_LED_MASK, TX_LED_PERIOD),
 		m_rx_led(GPIO1_RX_LED_MASK, RX_LED_PERIOD),
 		m_beat_led(GPIO1_BEAT_LED_MASK, BEAT_LED_PERIOD)
 	{
 		m_ms = 0;
+		m_tick = 0;
 		m_tx_led_timeout = 0;
 		m_rx_led_timeout = 0;
 		m_beat_led_timeout = 0;
@@ -69,6 +75,8 @@ public:
 		m_sequencer.m_consumer = &m_note_output_midi;
 		m_note_output_midi.m_midi_out = &m_midi_output;
 
+		m_keyboard.m_i2c = &m_i2c;
+
 		m_midi_input.listen();
 		m_internal_clock.start();
 
@@ -78,13 +86,18 @@ public:
 		m_midi_input.run();
 		m_midi_output.run();
 		m_internal_clock.run(m_ms);
+		if(m_tick) {
+			m_keyboard.tick();
+			m_note_output_midi.tick();
+			m_tx_led.tick();
+			m_rx_led.tick();
+			m_beat_led.tick();
+			m_tick = 0;
+		}
 	}
 	void on_tick() {
 		m_ms++;
-		m_note_output_midi.tick();
-		m_tx_led.tick();
-		m_rx_led.tick();
-		m_beat_led.tick();
+		m_tick = 1;
 	}
 
 	void on_event(int type, int param) {
@@ -101,10 +114,14 @@ public:
 		}
 	}
 
-	inline void on_uart0_rx_complete(byte status) {
+	void on_uart0_rx_complete(byte status) {
 		m_midi_input.on_rx_complete(status);
 	}
+	void on_i2c_txn_complete(byte status) {
+		m_i2c.on_txn_complete(status);
+	}
+
 };
 
 
-#endif /* SOURCES_ARPEGGIATOR_H_ */
+#endif /* SOURCES_ARPIE_H_ */

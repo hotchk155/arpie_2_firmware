@@ -5,6 +5,8 @@
  *      Author: Jason
  */
 
+//TODO: check volatile declarations on interrupt callable variables
+
 #ifndef SOURCES_DEFINITIONS_H_
 #define SOURCES_DEFINITIONS_H_
 
@@ -14,10 +16,25 @@ typedef uint32_t MILLISECONDS_TYPE;
 class CArpNote;
 class CArpNotes;
 
+enum {
+	I2C_ADDR_DISP = 123
+};
+
 /*
  * Listener - gets informed about something
  * Processor -
  */
+
+class II2CMessageListener {
+public:
+	virtual void on_i2c_msg(byte addr, byte *data, byte len) = 0;
+};
+
+class II2CDriver {
+public:
+	virtual byte send(byte addr, byte *payload, byte payload_size) = 0;
+	virtual byte receive(byte addr, byte payload_size, II2CMessageListener *listener) = 0;
+};
 
 /*
  * This interface to be implemented by classes that
@@ -77,6 +94,7 @@ public:
 	};
 	virtual void on_tick() = 0;
 	virtual void on_uart0_rx_complete(byte status) = 0;
+	virtual void on_i2c_txn_complete(byte status) = 0;
 	virtual void on_event(int event, int param) = 0;
 };
 extern IArpEvents *g_arp;

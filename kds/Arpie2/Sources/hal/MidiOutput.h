@@ -14,12 +14,15 @@ class CMidiOutput :
 {
 public:
 	enum {
-		TX_SIZE = 16,
-		BUF_SIZE = 128
+		TX_SIZE = 8,
+		BUF_SIZE = 32
 	} ;
 protected:
+	// this is the actual send buffer used with the UART peripheral. This can only
+	// be modified when there is no send in progress.
 	byte m_tx[TX_SIZE];
 
+	// this is the buffer in which incoming bytes are stored ready to be sent
 	byte m_buf[BUF_SIZE];
 	byte m_head;
 	byte m_tail;

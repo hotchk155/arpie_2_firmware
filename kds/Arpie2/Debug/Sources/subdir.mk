@@ -4,24 +4,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../Sources/Display.cpp \
 ../Sources/Events.cpp \
-../Sources/Keyboard.cpp \
-../Sources/i2c.cpp \
 ../Sources/main.cpp 
 
 OBJS += \
-./Sources/Display.o \
 ./Sources/Events.o \
-./Sources/Keyboard.o \
-./Sources/i2c.o \
 ./Sources/main.o 
 
 CPP_DEPS += \
-./Sources/Display.d \
 ./Sources/Events.d \
-./Sources/Keyboard.d \
-./Sources/i2c.d \
 ./Sources/main.d 
 
 

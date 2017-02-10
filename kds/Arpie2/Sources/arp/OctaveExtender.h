@@ -12,6 +12,7 @@
 
 class COctaveExtender : public IArpSequenceConsumer {
 public:
+public:
 	int m_extend_up;
 	int m_extend_down;
 	IArpSequenceConsumer *m_consumer;

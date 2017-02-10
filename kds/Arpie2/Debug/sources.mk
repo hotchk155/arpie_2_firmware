@@ -25,6 +25,7 @@ S_UPPER_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 Sources \
+Sources/hal \
 Project_Settings/Startup_Code \
 Generated_Code \
 
