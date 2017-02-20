@@ -38,10 +38,13 @@
 #include "FLASH1.h"
 #include "TU1.h"
 #include "GPIO1.h"
+#include "KBI0.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif 
+
+
 
 /*
 ** ===================================================================

@@ -25,16 +25,6 @@ enum {
  * Processor -
  */
 
-class II2CMessageListener {
-public:
-	virtual void on_i2c_msg(byte addr, byte *data, byte len) = 0;
-};
-
-class II2CDriver {
-public:
-	virtual byte send(byte addr, byte *payload, byte payload_size) = 0;
-	virtual byte receive(byte addr, byte payload_size, II2CMessageListener *listener) = 0;
-};
 
 /*
  * This interface to be implemented by classes that
@@ -94,7 +84,8 @@ public:
 	};
 	virtual void on_tick() = 0;
 	virtual void on_uart0_rx_complete(byte status) = 0;
-	virtual void on_i2c_txn_complete(byte status) = 0;
+	virtual void on_i2c_read_complete(byte is_ok) = 0;
+	virtual void on_i2c_write_complete(byte is_ok) = 0;
 	virtual void on_event(int event, int param) = 0;
 };
 extern IArpEvents *g_arp;

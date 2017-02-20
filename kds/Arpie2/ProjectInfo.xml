@@ -54,6 +54,7 @@
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\FLASH1.c</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\GPIO1.c</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\I2CBus.c</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\KBI0.c</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\PE_LDD.c</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\TU1.c</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\UART0.c</PathName>
@@ -68,6 +69,7 @@
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\GPIO1.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\I2CBus.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\IO_Map.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\KBI0.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\PE_Const.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\PE_Error.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Generated_Code\PE_LDD.h</PathName>
@@ -91,6 +93,7 @@
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\SequenceSort.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\Sequencer.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\arp\SequencerBasic.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\hal\Display.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\hal\I2CDriver.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\hal\IndicatorLed.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\Arpie2\Sources\hal\Keyboard.h</PathName>

@@ -37,7 +37,7 @@
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.command.rm.1496230719" name="Remove command" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.command.rm" value="rm" valueType="string"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.command.ar.1379440116" name="Archiver" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.command.ar" value="ar" valueType="string"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="ilg.gnuarmeclipse.managedbuild.cross.targetPlatform.1534492287" isAbstract="false" osList="all" superClass="ilg.gnuarmeclipse.managedbuild.cross.targetPlatform"/>
-							<builder buildPath="${workspace_loc:/Arpie2}/Debug" id="com.processorexpert.cdt.gcc.toolchain.debug.builder.61764025" superClass="com.processorexpert.cdt.gcc.toolchain.debug.builder"/>
+							<builder buildPath="${workspace_loc:/Arpie2}/Debug" id="com.processorexpert.cdt.gcc.toolchain.debug.builder.61764025" keepEnvironmentInBuildfile="false" name="Processor Expert Configuration Debug Builder" superClass="com.processorexpert.cdt.gcc.toolchain.debug.builder"/>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.453397694" name="Cross ARM GNU Assembler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor.1784132566" name="Use preprocessor" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor" value="true" valueType="boolean"/>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.922833879" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
@@ -92,9 +92,10 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.991916012.112288178" name="Keyboard.h" rcbsApplicability="disable" resourcePath="Sources/hal/Keyboard.h" toolsToInvoke=""/>
 					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.991916012..settings/com.freescale.processorexpert.core.prefs" name="com.freescale.processorexpert.core.prefs" rcbsApplicability="disable" resourcePath=".settings/com.freescale.processorexpert.core.prefs" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry excluding="Sources/hal/i2c.cpp|Sources/hal/Keyboard.cpp|Sources/Events.c|.settings/com.freescale.processorexpert.core.prefs|Sources/main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Generated_Code/Vectors.c|Sources/hal/Display.cpp|Sources/hal/Keyboard.h|Sources/hal/i2c.cpp|Sources/hal/Keyboard.cpp|Sources/Events.c|.settings/com.freescale.processorexpert.core.prefs|Sources/main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

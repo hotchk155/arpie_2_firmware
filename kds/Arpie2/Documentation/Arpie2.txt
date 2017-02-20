@@ -111,6 +111,11 @@ Module "GPIO1"     (component GPIO_LDD)
                 of the port will be driven to specified states. Only configured pins (through all of bit fields in this 
                 component) are affected.
 
+Module "KBI0"      (component Init_KBI_VAR0)
+   - KBI0_Init -This method initializes registers of the KBI module according to the Peripheral Initialization settings. Call 
+                this method in user code to initialize the module. By default, the method is called by PE automatically; see 
+                "Call Init method" property of the component for more details.
+
 Module "Cpu"       (component MKE02Z64LC2)
 
 ===================================================================================

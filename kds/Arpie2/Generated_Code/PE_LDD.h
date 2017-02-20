@@ -6,7 +6,7 @@
 **     Version     : Component 01.015, Driver 01.04, CPU db: 3.00.000
 **     Repository  : Kinetis
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2017-02-06, 14:26, # CodeGen: 40
+**     Date/Time   : 2017-02-10, 22:53, # CodeGen: 55
 **     Abstract    :
 **
 **     Settings    :
@@ -66,6 +66,7 @@
 #include "FLASH1.h"
 #include "TU1.h"
 #include "GPIO1.h"
+#include "KBI0.h"
 
 
 /*

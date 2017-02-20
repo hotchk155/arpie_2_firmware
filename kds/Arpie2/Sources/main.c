@@ -35,6 +35,7 @@
 #include "FLASH1.h"
 #include "TU1.h"
 #include "GPIO1.h"
+#include "KBI0.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"

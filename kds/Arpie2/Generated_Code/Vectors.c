@@ -6,7 +6,7 @@
 **     Version     : Component 01.015, Driver 01.04, CPU db: 3.00.000
 **     Repository  : Kinetis
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2017-02-06, 14:26, # CodeGen: 40
+**     Date/Time   : 2017-02-10, 22:53, # CodeGen: 55
 **     Abstract    :
 **
 **     Settings    :
@@ -60,6 +60,7 @@
   #include "FLASH1.h"
   #include "TU1.h"
   #include "GPIO1.h"
+  #include "KBI0.h"
   #include "Events.h"
 
 
@@ -119,7 +120,7 @@
     (tIsrFunc)&Cpu_Interrupt,          /* 0x25  0x00000094   -   ivINT_ACMP1                   unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x26  0x00000098   -   ivINT_PIT_CH0                 unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x27  0x0000009C   -   ivINT_PIT_CH1                 unused by PE */
-    (tIsrFunc)&Cpu_Interrupt,          /* 0x28  0x000000A0   -   ivINT_KBI0                    unused by PE */
+    (tIsrFunc)&INT_Encoder,            /* 0x28  0x000000A0   0   ivINT_KBI0                    used by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x29  0x000000A4   -   ivINT_KBI1                    unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x2A  0x000000A8   -   ivINT_Reserved42              unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x2B  0x000000AC   -   ivINT_ICS                     unused by PE */

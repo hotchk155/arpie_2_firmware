@@ -8,7 +8,7 @@
 **     Repository  : Kinetis
 **     Datasheet   : MKE02Z64M20SF0RM, Rev.2.1, Apr-23 2013; KEAZ64RM, Rev.1, Sep 2013
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2017-02-06, 15:09, # CodeGen: 43
+**     Date/Time   : 2017-02-10, 23:07, # CodeGen: 56
 **     Abstract    :
 **
 **     Settings    :
@@ -183,6 +183,7 @@
 #include "FLASH1.h"
 #include "TU1.h"
 #include "GPIO1.h"
+#include "KBI0.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
@@ -320,6 +321,10 @@ void PE_low_level_init(void)
                 PMC_SPMSC1_LVDE_MASK
                ));
   /* Common initialization of the CPU registers */
+  /* NVIC_ISER: SETENA|=0x01000000 */
+  NVIC_ISER |= NVIC_ISER_SETENA(0x01000000);
+  /* NVIC_IPR6: PRI_24=0 */
+  NVIC_IPR6 &= (uint32_t)~(uint32_t)(NVIC_IP_PRI_24(0xFF));
   /* SIM_SOPT: CLKOE=0,RSTPE=1,NMIE=1 */
   SIM_SOPT = (uint32_t)((SIM_SOPT & (uint32_t)~(uint32_t)(
               SIM_SOPT_CLKOE_MASK
@@ -337,6 +342,14 @@ void PE_low_level_init(void)
   (void)TU1_Init(NULL);
   /* ### GPIO_LDD "GPIO1" component auto initialization. Auto initialization feature can be disabled by component property "Auto initialization". */
   (void)GPIO1_Init(NULL);
+  /* ### Init_KBI "KBI0" init code ... */
+  /* ### Call "KBI0_Init();" init method in a user code, i.e. in the main code */
+
+  /* ### Note:   To enable automatic calling of the "KBI0" init code here,
+                 the 'Call Init method' property must be set to 'yes'.
+   */
+
+
   __EI();
 }
   /* Flash configuration field */

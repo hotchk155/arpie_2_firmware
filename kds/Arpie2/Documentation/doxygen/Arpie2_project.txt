@@ -28,6 +28,7 @@
 - \subpage FLASH1
 - \subpage TU1
 - \subpage GPIO1
+- \subpage KBI0
 
 */
 

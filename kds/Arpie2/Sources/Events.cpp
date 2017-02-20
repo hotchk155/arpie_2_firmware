@@ -30,9 +30,12 @@
 #include "Events.h"
 #include "Definitions.h"
 
+#include "KBI0.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif 
+
 
 
 /* User includes (#include below this line is not maintained by Processor Expert) */
@@ -77,7 +80,7 @@ void Cpu_OnNMIINT(void)
 /* ===================================================================*/
 void I2CBus_OnMasterBlockSent(LDD_TUserData *UserDataPtr)
 {
-//	i2c_on_txn_complete(0);
+	g_arp->on_i2c_write_complete(1);
 }
 
 /*
@@ -100,7 +103,7 @@ void I2CBus_OnMasterBlockSent(LDD_TUserData *UserDataPtr)
 /* ===================================================================*/
 void I2CBus_OnMasterBlockReceived(LDD_TUserData *UserDataPtr)
 {
-//	i2c_on_txn_complete(0);
+	g_arp->on_i2c_read_complete(1);
 }
 
 /*
@@ -121,7 +124,8 @@ void I2CBus_OnMasterBlockReceived(LDD_TUserData *UserDataPtr)
 /* ===================================================================*/
 void I2CBus_OnError(LDD_TUserData *UserDataPtr)
 {
-//	i2c_on_txn_complete(1);
+	g_arp->on_i2c_read_complete(0);
+	g_arp->on_i2c_write_complete(0);
 }
 
 /*
@@ -197,12 +201,17 @@ void UART0_OnTxComplete(LDD_TUserData *UserDataPtr)
 {
 }
 
+
 /* END Events */
 
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif 
-
+/*
+PE_ISR(INT_Encoder) {
+	KBI0_SC |= KBI_SC_KBACK_MASK ;
+}
+*/
 /*!
 ** @}
 */
