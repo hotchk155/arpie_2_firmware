@@ -72,7 +72,7 @@ public:
 
 	///////////////////////////////////////////////////////
 	// IMidiMessageProcessor::on_midi_msg
-	void on_midi_msg(byte status, byte param1, byte param2, byte num_params) {
+	void on_midi_msg(byte status, byte param1, byte param2, byte type) {
 		byte need_rebuild = 0;
 		switch(status & 0xF0) {
 		case midi::CH_NOTE_ON:
@@ -127,16 +127,6 @@ public:
 		if(need_rebuild) {
 			rebuild();
 		}
-	}
-
-	///////////////////////////////////////////////////////
-	// IMidiMessageProcessor::on_midi_sysex
-	void on_midi_sysex(byte data) {
-	}
-
-	///////////////////////////////////////////////////////
-	// IMidiMessageProcessor::on_midi_realtime
-	void on_midi_realtime(byte data) {
 	}
 
 	///////////////////////////////////////////////////////

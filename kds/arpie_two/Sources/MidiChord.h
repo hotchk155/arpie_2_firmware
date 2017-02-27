@@ -1,4 +1,14 @@
 /*
+ * MidiChord.h
+ *
+ *  Created on: 20 Feb 2017
+ *      Author: Jason
+ */
+
+#ifndef SOURCES_MIDICHORD_H_
+#define SOURCES_MIDICHORD_H_
+
+/*
  * ChordCatcherMidi.c
  *
  *  Created on: 19 Feb 2017
@@ -133,3 +143,8 @@ void midichord_on_hold_off() {
 		}
 	}
 }
+
+
+
+
+#endif /* SOURCES_MIDICHORD_H_ */

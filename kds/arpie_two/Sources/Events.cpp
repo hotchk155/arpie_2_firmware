@@ -5,17 +5,12 @@
 **     Component   : Events
 **     Version     : Driver 01.00
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2017-02-21, 19:43, # CodeGen: 34
+**     Date/Time   : 2017-02-11, 10:53, # CodeGen: 0
 **     Abstract    :
 **         This is user's event module.
 **         Put your event handler code here.
 **     Contents    :
-**         UART0_OnBlockReceived        - void UART0_OnBlockReceived(LDD_TUserData *UserDataPtr);
-**         UART0_OnBlockSent            - void UART0_OnBlockSent(LDD_TUserData *UserDataPtr);
-**         I2CBus_OnMasterBlockSent     - void I2CBus_OnMasterBlockSent(LDD_TUserData *UserDataPtr);
-**         I2CBus_OnMasterBlockReceived - void I2CBus_OnMasterBlockReceived(LDD_TUserData *UserDataPtr);
-**         I2CBus_OnError               - void I2CBus_OnError(LDD_TUserData *UserDataPtr);
-**         Cpu_OnNMIINT                 - void Cpu_OnNMIINT(void);
+**         Cpu_OnNMIINT - void Cpu_OnNMIINT(void);
 **
 ** ###################################################################*/
 /*!
@@ -33,6 +28,7 @@
 
 #include "Cpu.h"
 #include "Events.h"
+#include "Arpie.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,42 +39,18 @@ extern "C" {
 
 /*
 ** ===================================================================
-**     Event       :  UART0_OnBlockReceived (module Events)
+**     Event       :  Cpu_OnNMIINT (module Events)
 **
-**     Component   :  UART0 [Serial_LDD]
+**     Component   :  Cpu [MKE02Z64QH2]
 */
 /*!
 **     @brief
-**         This event is called when the requested number of data is
-**         moved to the input buffer.
-**     @param
-**         UserDataPtr     - Pointer to the user or
-**                           RTOS specific data. This pointer is passed
-**                           as the parameter of Init method.
+**         This event is called when the Non maskable interrupt had
+**         occurred. This event is automatically enabled when the [NMI
+**         interrupt] property is set to 'Enabled'.
 */
 /* ===================================================================*/
-void UART0_OnBlockReceived(LDD_TUserData *UserDataPtr)
-{
-  /* Write your code here ... */
-}
-
-/*
-** ===================================================================
-**     Event       :  UART0_OnBlockSent (module Events)
-**
-**     Component   :  UART0 [Serial_LDD]
-*/
-/*!
-**     @brief
-**         This event is called after the last character from the
-**         output buffer is moved to the transmitter. 
-**     @param
-**         UserDataPtr     - Pointer to the user or
-**                           RTOS specific data. This pointer is passed
-**                           as the parameter of Init method.
-*/
-/* ===================================================================*/
-void UART0_OnBlockSent(LDD_TUserData *UserDataPtr)
+void Cpu_OnNMIINT(void)
 {
   /* Write your code here ... */
 }
@@ -103,7 +75,7 @@ void UART0_OnBlockSent(LDD_TUserData *UserDataPtr)
 /* ===================================================================*/
 void I2CBus_OnMasterBlockSent(LDD_TUserData *UserDataPtr)
 {
-  /* Write your code here ... */
+	CI2C::instance().on_write_complete();
 }
 
 /*
@@ -126,7 +98,7 @@ void I2CBus_OnMasterBlockSent(LDD_TUserData *UserDataPtr)
 /* ===================================================================*/
 void I2CBus_OnMasterBlockReceived(LDD_TUserData *UserDataPtr)
 {
-  /* Write your code here ... */
+	CI2C::instance().on_read_complete();
 }
 
 /*
@@ -147,28 +119,55 @@ void I2CBus_OnMasterBlockReceived(LDD_TUserData *UserDataPtr)
 /* ===================================================================*/
 void I2CBus_OnError(LDD_TUserData *UserDataPtr)
 {
-  /* Write your code here ... */
+	CI2C::instance().on_error();
+}
+
+
+/*
+** ===================================================================
+**     Event       :  UART0_OnBlockReceived (module Events)
+**
+**     Component   :  UART0 [Serial_LDD]
+*/
+/*!
+**     @brief
+**         This event is called when the requested number of data is
+**         moved to the input buffer.
+**     @param
+**         UserDataPtr     - Pointer to the user or
+**                           RTOS specific data. This pointer is passed
+**                           as the parameter of Init method.
+*/
+/* ===================================================================*/
+void UART0_OnBlockReceived(LDD_TUserData *UserDataPtr)
+{
+	g_arpie->on_uart0_rx_complete();
 }
 
 /*
 ** ===================================================================
-**     Event       :  Cpu_OnNMIINT (module Events)
+**     Event       :  UART0_OnBlockSent (module Events)
 **
-**     Component   :  Cpu [MKE02Z64LC2]
+**     Component   :  UART0 [Serial_LDD]
 */
 /*!
 **     @brief
-**         This event is called when the Non maskable interrupt had
-**         occurred. This event is automatically enabled when the [NMI
-**         interrupt] property is set to 'Enabled'.
+**         This event is called after the last character from the
+**         output buffer is moved to the transmitter. 
+**     @param
+**         UserDataPtr     - Pointer to the user or
+**                           RTOS specific data. This pointer is passed
+**                           as the parameter of Init method.
 */
 /* ===================================================================*/
-void Cpu_OnNMIINT(void)
+void UART0_OnBlockSent(LDD_TUserData *UserDataPtr)
 {
-  /* Write your code here ... */
+	//midi_out_on_tx_complete(1);
 }
 
 /* END Events */
+
+
 
 #ifdef __cplusplus
 }  /* extern "C" */

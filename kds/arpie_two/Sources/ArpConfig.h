@@ -9,12 +9,10 @@ STEP_ * ArpChain.h
 #define SOURCES_ARPCONFIG_H_
 
 
-
 #include "ArpNotes.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-#define ARP_NUM_CHAINS 2
 #define SEQ_STEP_MAX 16
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -23,15 +21,13 @@ STEP_ * ArpChain.h
 //
 //////////////////////////////////////////////////////////////////////////////////////
 typedef struct {
-	byte seq_rate;
-	byte seq_step[SEQ_STEP_MAX];
-	byte seq_num_steps;
-} ARP_CHAIN_CONFIG;
+
+} ARP_CHAIN;
 
 
 typedef struct {
-	ARP_NOTES chord;
-	ARP_CHAIN_CONFIG chain[ARP_NUM_CHAINS];
+	CArpNotes::CONFIG chord;
+	ARP_CHAIN chain[2];
 } ARP_CONFIG;
 
 
@@ -52,7 +48,6 @@ typedef struct {
 typedef struct {
 	byte hold:1;
 	byte which_chain;
-	int bpm;
 } GLOBAL_STATE;
 
 
@@ -62,7 +57,7 @@ typedef struct {
 //
 //////////////////////////////////////////////////////////////////////////////////////
 extern ARP_CONFIG g_arp;
-extern GLOBAL_CONFIG g_cfg;
+//extern GLOBAL_CONFIG g_cfg;
 extern GLOBAL_STATE g_state;
 
 #endif /* SOURCES_ARPCONFIG_H_ */

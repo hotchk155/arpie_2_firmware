@@ -1,5 +1,68 @@
-#include "Arpie.h"
+/*
+ * i2c.h
+ *
+ *  Created on: 20 Feb 2017
+ *      Author: Jason
+ */
 
+#ifndef SOURCES_I2C_H_
+#define SOURCES_I2C_H_
+
+class CI2C {
+	enum {
+		MAX_TX = 50
+	};
+
+	byte m_busy;
+	byte m_buf[MAX_TX];
+	volatile byte m_rx;
+public:
+	static const byte DISP_ADDR = 123;
+
+	CI2C() {
+		m_busy = 0;
+	}
+
+	static inline CI2C& instance() {
+		static CI2C i2c;
+		return i2c;
+	}
+	void on_read_complete()	{
+		m_busy = 0;
+	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void on_write_complete() {
+		m_busy = 0;
+	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void on_error() {
+		m_busy = 0;
+	}
+	////////////////////////////////////////////////////////////////////////
+	void write(byte addr, byte *payload, byte payload_size)
+	{
+		LDD_TError e = I2CBus_SelectSlaveDevice(I2CBus_DeviceData, LDD_I2C_ADDRTYPE_7BITS, addr); // set the i2c slave address
+		m_busy = 1;
+		e = I2CBus_MasterSendBlock(I2CBus_DeviceData, (void*)payload, payload_size, LDD_I2C_SEND_STOP); // kick off a write
+		while(m_busy);
+	}
+	////////////////////////////////////////////////////////////////////////
+	byte read(byte addr)
+	{
+		LDD_TError e = I2CBus_SelectSlaveDevice(I2CBus_DeviceData, LDD_I2C_ADDRTYPE_7BITS, addr); // set the i2c slave address
+		m_busy = 1;
+		m_buf[0] = 0;
+		e = I2CBus_MasterSendBlock(I2CBus_DeviceData, (void*)m_buf, 1, LDD_I2C_NO_SEND_STOP);
+		while(m_busy);
+		m_busy = 1;
+		e = I2CBus_MasterReceiveBlock(I2CBus_DeviceData, (void*)m_buf, 1, LDD_I2C_SEND_STOP);
+		while(m_busy);
+
+		return m_buf[0];
+	}
+};
+
+/*
 enum {
 	MAX_TX = 50,
 	MAX_FIFO = 100,
@@ -139,19 +202,16 @@ void i2c_init()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void i2c_on_read_complete()	{
 	wait = 0;
-	/*
 	m_flags &= ~BUSY_FLAG;
 	if(m_buf[0]) {
 		m_rx = m_buf[0];
 		m_flags |= READ_PENDING_FLAG;
 	}
 	init_txn();
-	*/
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void i2c_on_write_complete() {
 	wait = 0;
-	/*
 	if(m_flags & READ_TXN_FLAG) {
 		m_flags &= ~READ_TXN_FLAG;
 		LDD_TError e = I2CBus_MasterReceiveBlock(I2CBus_DeviceData, (void*)m_buf, 2, LDD_I2C_SEND_STOP); // kick off a read
@@ -159,17 +219,15 @@ void i2c_on_write_complete() {
 	else {
 		m_flags &= ~BUSY_FLAG;
 		init_txn();
-	}*/
+	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void i2c_on_error() {
 	wait = 0;
-	/*
 	m_flags &= ~(BUSY_FLAG|READ_TXN_FLAG);
 	m_flags |= READ_PENDING_FLAG;
 	m_rx = 0;
 	init_txn();
-	*/
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -248,3 +306,6 @@ byte i2c_read(byte addr)
 	return m_buf[0];
 }
 
+
+*/
+#endif /* SOURCES_I2C_H_ */

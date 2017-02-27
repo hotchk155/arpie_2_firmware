@@ -1,10 +1,38 @@
 /*
+ * Ui.h
+ *
+ *  Created on: 20 Feb 2017
+ *      Author: Jason
+ */
+
+#ifndef SOURCES_UI_H_
+#define SOURCES_UI_H_
+
+
+
+/*
  * UI.c
  *
  *  Created on: 17 Feb 2017
  *      Author: Jason
  */
 #include "Arpie.h"
+
+class IUiComponent {
+public:
+	virtual void ui_render(uint32_t *raster, uint32_t *highlight) = 0;
+	virtual byte ui_needs_repaint() = 0;
+	virtual void ui_on_key(byte key, byte modifiers) = 0;
+	virtual void ui_on_encoder(char delta, byte modifiers) = 0;
+};
+
+class CUi {
+public:
+	CUi() {
+	}
+};
+
+/*
 //////////////////////////////////////////////////////////////////
 // UI PAGE FOR SELECTING A PARAMETER FROM A SET OF DISCRETE VALUES
 
@@ -274,3 +302,6 @@ void ui_run() {
 
 
 
+
+*/
+#endif /* SOURCES_UI_H_ */
