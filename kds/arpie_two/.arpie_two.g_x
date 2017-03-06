@@ -28,7 +28,7 @@
       <File Name="Generated_Code/PE_LDD.c" FileDate="2017-02-17, 15:08:57" FileAge="1487344137082" FileType="45637" CompNumb="6" />
       <File Name="Documentation/arpie_two.txt" FileDate="2017-02-19, 20:07:40" FileAge="1487534860556" FileType="3072" />
       <File Name="Generated_Code/SysTick.h" FileDate="2017-02-11, 15:31:50" FileAge="1486827110966" FileType="45637" CompNumb="8" />
-      <File Name="Documentation/arpie_two_SIGNALS.txt" FileDate="2017-02-27, 12:10:20" FileAge="1488197420352" FileType="3072" />
+      <File Name="Documentation/arpie_two_SIGNALS.txt" FileDate="2017-03-06, 11:24:17" FileAge="1488799457796" FileType="3072" />
       <File Name="Generated_Code/UART0.h" FileDate="2017-02-17, 15:58:18" FileAge="1487347098796" FileType="45637" CompNumb="9" />
       <File Name="Static_Code/PDD/PIT_PDD.h" FileDate="2017-02-11, 10:53:57" FileAge="1486810437934" FileType="1048576" />
       <File Name="Generated_Code/SysTick.c" FileDate="2017-02-11, 15:31:50" FileAge="1486827110954" FileType="45637" CompNumb="8" />
@@ -58,7 +58,7 @@
       <File Name="Documentation/doxygen/RoutingReport_component.txt" FileDate="2017-02-11, 10:53:58" FileAge="1486810438008" FileType="45637" CompNumb="6" />
       <File Name="Generated_Code/GPIOA.h" FileDate="2017-02-19, 20:07:40" FileAge="1487534860300" FileType="45637" CompNumb="10" />
       <File Name="Generated_Code/IO_Map.h" FileDate="2017-02-11, 12:36:33" FileAge="1486816593564" FileType="45637" />
-      <File Name="ProjectInfo.xml" FileDate="2017-02-25, 13:00:38" FileAge="1488027638932" FileType="45637" />
+      <File Name="ProjectInfo.xml" FileDate="2017-03-06, 11:24:17" FileAge="1488799457927" FileType="45637" />
       <File Name="Static_Code/PDD/RTC0_PDD.h" FileDate="2017-02-11, 10:53:57" FileAge="1486810437945" FileType="1048576" />
       <File Name="Static_Code/PDD/SysTick_PDD.h" FileDate="2017-02-11, 10:53:57" FileAge="1486810437958" FileType="1048576" />
       <File Name="Generated_Code/GPIOA.c" FileDate="2017-02-19, 20:07:40" FileAge="1487534860299" FileType="45637" CompNumb="10" />
@@ -78,5 +78,5 @@
       <File Name="Static_Code/PDD/WDOG_PDD.h" FileDate="2017-02-11, 10:53:57" FileAge="1486810437967" FileType="1048576" />
     </GeneratedByPE>
   </GeneratedFilesList>
-  <CodeGenReference>39</CodeGenReference>
+  <CodeGenReference>43</CodeGenReference>
 </CodeGenerationInfo>

@@ -9,10 +9,20 @@
 #define SOURCES_DISPLAY_H_
 
 class CDisplay {
+
+	enum {
+		CMD_DISP = 0x80,
+		CMD_RESET = 0x83
+	};
 	enum {
 		SYM_PCT,
 		SYM_MINUS,
 		SYM_SLASH,
+		SYM_HASH,
+		SYM_MINOR,
+		SYM_PLUS,
+		SYM_DIM,
+		SYM_DOT
 	};
 	static const byte m_digits[];
 	static const byte m_letters[];
@@ -28,6 +38,16 @@ class CDisplay {
 		}
 	}
 
+	void format(uint32_t* raster, const byte *map, byte pos) {
+		byte left_shift = 20 - (4 * pos);
+		for(int i=0; i<5; ++i) {
+			uint32_t b = *map++;
+			*raster |= (b<<left_shift);
+			++raster;
+		}
+	}
+
+	/*
 	void format_char(byte *raster, byte ch, byte pos) {
 		const byte  *map;
 		if(ch >= '0' && ch <= '9') {
@@ -56,8 +76,46 @@ class CDisplay {
 			format(disp,&m_digits[5 * n],pos);
 		}
 	}
+	*/
+
+
+	void format_char(uint32_t *raster, byte ch, byte pos) {
+		const byte  *map;
+		if(ch >= '0' && ch <= '9') {
+			map = &m_digits[5 * (ch - '0')];
+		}
+		else if(ch >= 'A' && ch <= 'Z') {
+			map = &m_letters[5 * (ch - 'A')];
+		}
+		else if(ch >= 'a' && ch <= 'z') {
+			map = &m_letters[5 * (ch - 'a')];
+		}
+		else {
+			switch(ch) {
+			case '%': map = &m_symbols[5*SYM_PCT]; break;
+			case '-': map = &m_symbols[5*SYM_MINUS]; break;
+			case '/': map = &m_symbols[5*SYM_SLASH]; break;
+			case '#': map = &m_symbols[5*SYM_HASH]; break;
+			case '~': map = &m_symbols[5*SYM_MINOR]; break;
+			case '+': map = &m_symbols[5*SYM_PLUS]; break;
+			case '^': map = &m_symbols[5*SYM_DIM]; break;
+			case '.': map = &m_symbols[5*SYM_DOT]; break;
+			default:
+				return;
+			}
+		}
+		format(raster,map,pos);
+	}
+
+	void format_digit(uint32_t *raster, byte n, byte pos) {
+		if(n >= 0 && n < 10) {
+			format(raster,&m_digits[5 * n],pos);
+		}
+	}
 
 public:
+	static const byte DISP_ADDR = 123;
+
 	static inline CDisplay& instance() {
 		static CDisplay disp;
 		return disp;
@@ -83,8 +141,15 @@ public:
 			len = 25;
 		}
 		if(len) {
-			CI2C::instance().write(CI2C::DISP_ADDR,buf,len);
+			CI2C::instance().write(DISP_ADDR,buf,len);
+			buf[0] = CMD_DISP;
+			CI2C::instance().write(DISP_ADDR,buf,1);
 		}
+	}
+
+	void init() {
+		byte buf = CMD_RESET;
+		CI2C::instance().write(DISP_ADDR,&buf,1);
 	}
 
 	void write(uint32_t *raster, uint32_t *highlight) {
@@ -122,11 +187,13 @@ public:
 			}
 		}
 		if(len) {
-			CI2C::instance().write(CI2C::DISP_ADDR,buf,len);
+			CI2C::instance().write(DISP_ADDR,buf,len);
+			buf[0] = CMD_DISP;
+			CI2C::instance().write(DISP_ADDR,buf,1);
 		}
 	}
 
-	void format_4digit(int n, byte *raster) {
+	void format_4digit(int n, uint32_t *raster) {
 		format_digit(raster, n/1000, 0);
 		n%=1000;
 		format_digit(raster, n/100, 1);
@@ -136,7 +203,7 @@ public:
 		format_digit(raster, n, 3);
 	}
 
-	void format_3digit(int n, byte *raster) {
+	void format_3digit(int n, uint32_t *raster) {
 		format_digit(raster, n/100, 0);
 		n%=100;
 		format_digit(raster, n/10, 1);
@@ -144,13 +211,14 @@ public:
 		format_digit(raster, n, 2);
 	}
 
-	void format_text(const byte *sz, byte *raster) {
+	void format_text(const char *sz, uint32_t *raster) {
 		int pos = 0;
 		while(*sz && pos <6) {
 			format_char(raster, *sz++, pos++);
 		}
 	}
 
+	/*
 	void text(const byte *sz) {
 		byte raster[24] = {0};
 		format_text(sz, raster);
@@ -160,7 +228,8 @@ public:
 		byte raster[24] = {0};
 		format_4digit(n, raster);
 		write(raster, NULL);
-	}
+	}*/
+
 };
 
 #endif /* SOURCES_DISPLAY_H_ */

@@ -141,7 +141,7 @@ void I2CBus_OnError(LDD_TUserData *UserDataPtr)
 /* ===================================================================*/
 void UART0_OnBlockReceived(LDD_TUserData *UserDataPtr)
 {
-	g_arpie->on_uart0_rx_complete();
+	CArpie::instance().on_uart0_rx_complete();
 }
 
 /*

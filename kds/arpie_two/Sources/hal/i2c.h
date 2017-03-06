@@ -13,11 +13,10 @@ class CI2C {
 		MAX_TX = 50
 	};
 
-	byte m_busy;
-	byte m_buf[MAX_TX];
+	volatile byte m_busy;
+	volatile byte m_buf[MAX_TX];
 	volatile byte m_rx;
 public:
-	static const byte DISP_ADDR = 123;
 
 	CI2C() {
 		m_busy = 0;
@@ -41,21 +40,29 @@ public:
 	////////////////////////////////////////////////////////////////////////
 	void write(byte addr, byte *payload, byte payload_size)
 	{
-		LDD_TError e = I2CBus_SelectSlaveDevice(I2CBus_DeviceData, LDD_I2C_ADDRTYPE_7BITS, addr); // set the i2c slave address
+		LDD_TError e;
 		m_busy = 1;
-		e = I2CBus_MasterSendBlock(I2CBus_DeviceData, (void*)payload, payload_size, LDD_I2C_SEND_STOP); // kick off a write
+		do {
+			I2CBus_SelectSlaveDevice(I2CBus_DeviceData, LDD_I2C_ADDRTYPE_7BITS, addr); // set the i2c slave address
+			e = I2CBus_MasterSendBlock(I2CBus_DeviceData, (void*)payload, payload_size, LDD_I2C_SEND_STOP); // kick off a write
+		} while(e==ERR_BUSY);
 		while(m_busy);
 	}
 	////////////////////////////////////////////////////////////////////////
 	byte read(byte addr)
 	{
-		LDD_TError e = I2CBus_SelectSlaveDevice(I2CBus_DeviceData, LDD_I2C_ADDRTYPE_7BITS, addr); // set the i2c slave address
+		LDD_TError e;
 		m_busy = 1;
 		m_buf[0] = 0;
-		e = I2CBus_MasterSendBlock(I2CBus_DeviceData, (void*)m_buf, 1, LDD_I2C_NO_SEND_STOP);
+		do {
+			I2CBus_SelectSlaveDevice(I2CBus_DeviceData, LDD_I2C_ADDRTYPE_7BITS, addr); // set the i2c slave address
+			e = I2CBus_MasterSendBlock(I2CBus_DeviceData, (void*)m_buf, 1, LDD_I2C_NO_SEND_STOP);
+		} while(e==ERR_BUSY);
 		while(m_busy);
 		m_busy = 1;
-		e = I2CBus_MasterReceiveBlock(I2CBus_DeviceData, (void*)m_buf, 1, LDD_I2C_SEND_STOP);
+		do {
+			e = I2CBus_MasterReceiveBlock(I2CBus_DeviceData, (void*)m_buf, 1, LDD_I2C_SEND_STOP);
+		} while(e==ERR_BUSY);
 		while(m_busy);
 
 		return m_buf[0];

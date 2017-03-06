@@ -27,38 +27,18 @@
 /* MODULE main */
 
 
-/* Including needed modules to compile this module/procedure */
-//#include "Cpu.h"
-//#include "Events.h"
-//#include "I2CBus.h"
-//#include "SysTick.h"
-//#include "UART0.h"
-//#include "GPIOA.h"
-/* Including shared modules, which are used for whole project */
-////#include "PE_Types.h"
-//#include "PE_Error.h"
-//#include "PE_Const.h"
-//#include "IO_Map.h"
-/* User includes (#include below this line is not maintained by Processor Expert) */
 #include "Arpie.h"
 
-ARP_CONFIG g_arp;
-//GLOBAL_CONFIG g_cfg;
-GLOBAL_STATE g_state;
-
-CArpie *g_arpie;
 uint32_t g_millis = 0;
 
-CArpNotes scratch;
-
 extern "C" {
-///////////////////////////////////////////////////////////////
-// ISR for once per millisecond tick count
-PE_ISR(ISR_SysTick)
-{
-	++g_millis;
-	g_arpie->on_tick();
-}
+	///////////////////////////////////////////////////////////////
+	// ISR for once per millisecond tick count
+	PE_ISR(ISR_SysTick)
+	{
+		++g_millis;
+		CArpie::instance().on_tick();
+	}
 }
 
 /*lint -save  -e970 Disable MISRA rule (6.3) checking. */
@@ -66,8 +46,7 @@ int main(void)
 /*lint -restore Enable MISRA rule (6.3) checking. */
 {
   /* Write your local variable definition here */
-  CArpie arpie;
-  g_arpie = &arpie;
+  CArpie::instance();
 
   /*** Processor Expert internal initialization. DON'T REMOVE THIS CODE!!! ***/
   PE_low_level_init();
@@ -75,8 +54,9 @@ int main(void)
 
   /* Write your code here */
   /* For example: for(;;) { } */
-  g_arpie->init();
-  g_arpie->run();
+  CArpie::instance().init();
+  CArpie::instance().run();
+
 
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/

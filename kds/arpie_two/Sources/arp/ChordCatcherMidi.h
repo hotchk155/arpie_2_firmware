@@ -1,15 +1,21 @@
-/*
- * ChordCatcherMidi.h
- *
- *  Created on: 24 Feb 2017
- *      Author: Jason
- */
+////////////////////////////////////////////////////////
+//
+//                                           //// ////
+//      ////     ////  ////    //  ////      //   //
+//         //  //     //  //      //  //    //   //
+//     /////  //     //  //  //  //////    //   //
+//   //  //  //     //  //  //  //        //   //
+//   /////  //     /////   //   //////  //// ////
+//                //
+//               //     MIDI/CV ARPEGGIATOR
+//                        2017/hotchk155
+//
+////////////////////////////////////////////////////////
 
 #ifndef SOURCES_CHORDCATCHERMIDI_H_
 #define SOURCES_CHORDCATCHERMIDI_H_
 
-
-class CChordCatcherMidi
+class CChordCatcherMidi: public INoteProvider
 {
 public:
 	enum {
@@ -29,7 +35,7 @@ protected:
 	CONFIG m_cfg;
 	byte m_len;
 	byte m_held_notes;
-	byte m_is_changed:1;
+	byte m_ver;
 	byte m_hold:1;
 	MIDI_NOTE m_notes[MAX_LEN];
 
@@ -51,6 +57,7 @@ public:
 		m_len = 0;
 		m_held_notes = 0;
 		m_hold = 0;
+		m_ver = 0;
 	}
 
 	void test() {
@@ -58,7 +65,7 @@ public:
 		m_notes[0].note = 60;
 		m_notes[1].note = 62;
 		m_notes[2].note = 64;
-		m_is_changed = 1;
+		m_ver++;
 	}
 
 	///////////////////////////////////////////////////////
@@ -72,17 +79,17 @@ public:
 	}
 
 	///////////////////////////////////////////////////////
-	inline byte is_changed() {
-		return m_is_changed;
+	byte get_notes_version() {
+		return m_ver;
 	}
 
 	///////////////////////////////////////////////////////
-	void get_notes(CArpNotes *notes) {
+	byte get_notes(CArpNotes *notes) {
 		notes->init();
 		for(byte i=0; i<m_len; ++i) {
 			notes->insert_midi_note(m_notes[i].note);
 		}
-		m_is_changed = 0;
+		return m_ver;
 	}
 
 	///////////////////////////////////////////////////////
@@ -115,7 +122,7 @@ public:
 						++m_len;
 						++m_held_notes;
 					}
-					m_is_changed = 1;
+					++m_ver;
 					break;
 				}
 				// else fall through (zero note on velocity = note off)
@@ -132,7 +139,7 @@ public:
 							remove_note(i);
 							--m_held_notes;
 							--i;
-							m_is_changed = 1;
+							++m_ver;
 						}
 					}
 				}
@@ -150,7 +157,7 @@ public:
 			for(int i=0; i<m_len;) {
 				if(!m_notes[i].is_held) {
 					remove_note(i);
-					m_is_changed = 1;
+					++m_ver;
 				}
 				else {
 					++i;

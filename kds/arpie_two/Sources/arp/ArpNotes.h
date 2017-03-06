@@ -1,3 +1,16 @@
+////////////////////////////////////////////////////////
+//
+//                                           //// ////
+//      ////     ////  ////    //  ////      //   //
+//         //  //     //  //      //  //    //   //
+//     /////  //     //  //  //  //////    //   //
+//   //  //  //     //  //  //  //        //   //
+//   /////  //     /////   //   //////  //// ////
+//                //
+//               //     MIDI/CV ARPEGGIATOR
+//                        2017/hotchk155
+//
+////////////////////////////////////////////////////////
 
 #ifndef SOURCES_INCLUDE_ARPNOTES_H_
 #define SOURCES_INCLUDE_ARPNOTES_H_
@@ -23,7 +36,7 @@ typedef struct {
 class CArpNotes {
 public:
 	enum {
-		MAX_PITCHES = 100,
+		MAX_PITCHES = 50,
 		MAX_NOTES = 100,
 		OCTAVE_PITCH = (((PITCH)12)<<8),
 		MIN_PITCH = (((PITCH)0)<<8),
@@ -122,7 +135,7 @@ public:
 	///////////////////////////////////////////////////////////////
 	// shuffles the notes into random order
 	void shuffle() {
-		for(int i=m_cfg.num_notes-1; i<0; --i) {
+		for(int i=m_cfg.num_notes-1; i>0; --i) {
 			int j = rand()%(i+1);
 			NOTE t = m_cfg.note[i];
 			m_cfg.note[i] = m_cfg.note[j];
@@ -249,7 +262,25 @@ public:
 		m_cfg.num_notes = dest_pos;
 	}
 
-
+	///////////////////////////////////////////////////////////////
+	// converts a sequence to a single chord hit
+	void to_chord() {
+		PITCH t[MAX_PITCHES];
+		int count = 0;
+		for(int i=0; i<m_cfg.num_pitches; ++i) {
+			int j;
+			for(j=0; j<count; ++j) {
+				if(t[j] == m_cfg.pitch[i]) {
+					break;
+				}
+			}
+			if(j==count) {
+				t[count++] = m_cfg.pitch[i];
+			}
+		}
+		memcpy(m_cfg.pitch, t, sizeof m_cfg.num_pitches);
+		m_cfg.num_notes = 1;
+	}
 };
 
 
