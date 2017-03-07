@@ -16,7 +16,8 @@ public:
 		CLOCK_TIME = 10,
 		TX_LED_PIN = GPIO_PDD_PIN_0,
 		RX_LED_PIN = GPIO_PDD_PIN_6,
-		CLOCK_LED_PIN = GPIO_PDD_PIN_7
+		CLOCK_LED_PIN = GPIO_PDD_PIN_7,
+		AB_LED_PIN = GPIO_PDD_PIN_16
 	};
 protected:
 	byte m_rx_timeout;
@@ -43,6 +44,14 @@ public:
 	void pulse_clock() {
 		GPIO_PDD_SetPortDataOutputMask(GPIOA_BASE_PTR, CLOCK_LED_PIN);
 		m_clock_timeout = CLOCK_TIME;
+	}
+	void ab_led(byte a) {
+		if(a) {
+			GPIO_PDD_SetPortDataOutputMask(GPIOA_BASE_PTR, AB_LED_PIN);
+		}
+		else {
+			GPIO_PDD_ClearPortDataOutputMask(GPIOA_BASE_PTR, AB_LED_PIN);
+		}
 	}
 	void on_tick() {
 		if(m_rx_timeout) {

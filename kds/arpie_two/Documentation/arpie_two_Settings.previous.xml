@@ -102,81 +102,6 @@ PE_DEBUGHALT();
       </boolgroup>
     </CompilerProperties>
   </CPU_Bean>
-  <Bean name="PORT" type="Init_PORT">
-    <Enabled v="Y" />
-    <Properties>
-      <Component_name v="PORT" />
-      <Device v="PORT" />
-      <group name="Settings">
-        <group name="PTA">
-          <boolgroup name="Pin 0" v="Do not initialize" />
-          <boolgroup name="Pin 1" v="Do not initialize" />
-          <boolgroup name="Pin 2" v="Do not initialize" />
-          <boolgroup name="Pin 3" v="Do not initialize" />
-          <boolgroup name="Pin 4" v="Do not initialize" />
-          <boolgroup name="Pin 5" v="Do not initialize" />
-          <boolgroup name="Pin 6" v="Do not initialize" />
-          <boolgroup name="Pin 7" v="Do not initialize" />
-        </group>
-        <group name="PTB">
-          <boolgroup name="Pin 0" v="Do not initialize" />
-          <boolgroup name="Pin 1" v="Do not initialize" />
-          <boolgroup name="Pin 2" v="Initialize">
-            <Pullup v="Enable" />
-          </boolgroup>
-          <boolgroup name="Pin 3" v="Initialize">
-            <Pullup v="Enable" />
-          </boolgroup>
-          <boolgroup name="Pin 4" v="Do not initialize" />
-          <boolgroup name="Pin 5" v="Do not initialize" />
-          <boolgroup name="Pin 6" v="Do not initialize" />
-          <boolgroup name="Pin 7" v="Do not initialize" />
-        </group>
-        <group name="PTC">
-          <boolgroup name="Pin 0" v="Do not initialize" />
-          <boolgroup name="Pin 1" v="Do not initialize" />
-          <boolgroup name="Pin 2" v="Do not initialize" />
-          <boolgroup name="Pin 3" v="Do not initialize" />
-          <boolgroup name="Pin 4" v="Do not initialize" />
-          <boolgroup name="Pin 5" v="Do not initialize" />
-          <boolgroup name="Pin 6" v="Do not initialize" />
-          <boolgroup name="Pin 7" v="Do not initialize" />
-        </group>
-        <group name="PTD">
-          <boolgroup name="Pin 0" v="Do not initialize" />
-          <boolgroup name="Pin 1" v="Do not initialize" />
-          <boolgroup name="Pin 2" v="Do not initialize" />
-          <boolgroup name="Pin 3" v="Do not initialize" />
-        </group>
-        <group name="Filters">
-          <group name="Filter division">
-            <Set_1 v="BUSCLK/2" />
-            <Set_2 v="BUSCLK/32" />
-            <Set_3 v="LPOCLK" />
-          </group>
-          <group name="Filter selection">
-            <PTA v="BUSCLK" />
-            <PTB v="BUSCLK" />
-            <PTC v="BUSCLK" />
-            <PTD v="BUSCLK" />
-            <KBI0 v="No filter" />
-            <KBI1 v="No filter" />
-            <NMI v="FLTDIV3" />
-            <RST v="No filter" />
-          </group>
-        </group>
-      </group>
-      <group name="Initialization">
-        <Call_Init_method v="yes" />
-      </group>
-    </Properties>
-    <Methods>
-      <Init v="generate code" />
-    </Methods>
-    <Events>
-      <EmptySection_DummyValue />
-    </Events>
-  </Bean>
   <Bean name="I2CBus" type="I2C_LDD">
     <Enabled v="Y" />
     <Properties>
@@ -416,6 +341,107 @@ PE_DEBUGHALT();
       <event name="OnBreak" v="don&amp;apos;t generate code" />
       <event name="OnError" v="don&amp;apos;t generate code" />
       <event name="OnTxComplete" v="don&amp;apos;t generate code" />
+    </Events>
+  </Bean>
+  <Bean name="GPIOA" type="Init_GPIO">
+    <Enabled v="Y" />
+    <Properties>
+      <Component_name v="GPIOA" />
+      <Device v="GPIOA" />
+      <group name="Settings">
+        <boolgroup name="Pin 0" v="Initialize">
+          <Pin_direction v="Output" />
+          <Pin_input v="Disabled" />
+          <Output_value v="No initialization" />
+          <Pull_resistor v="No initialization" />
+        </boolgroup>
+        <boolgroup name="Pin 1" v="Do not initialize" />
+        <boolgroup name="Pin 2" v="Do not initialize" />
+        <boolgroup name="Pin 3" v="Do not initialize" />
+        <boolgroup name="Pin 4" v="Do not initialize" />
+        <boolgroup name="Pin 5" v="Do not initialize" />
+        <boolgroup name="Pin 6" v="Initialize">
+          <Pin_direction v="Output" />
+          <Pin_input v="Disabled" />
+          <Output_value v="No initialization" />
+          <Pull_resistor v="No initialization" />
+        </boolgroup>
+        <boolgroup name="Pin 7" v="Initialize">
+          <Pin_direction v="Output" />
+          <Pin_input v="Disabled" />
+          <Output_value v="No initialization" />
+          <Pull_resistor v="No initialization" />
+        </boolgroup>
+        <boolgroup name="Pin 8" v="Do not initialize" />
+        <boolgroup name="Pin 9" v="Do not initialize" />
+        <boolgroup name="Pin 10" v="Initialize">
+          <Pin_direction v="Input" />
+          <Pin_input v="Enabled" />
+          <Output_value v="No initialization" />
+          <Pull_resistor v="Enabled" />
+        </boolgroup>
+        <boolgroup name="Pin 11" v="Initialize">
+          <Pin_direction v="Input" />
+          <Pin_input v="Enabled" />
+          <Output_value v="No initialization" />
+          <Pull_resistor v="Enabled" />
+        </boolgroup>
+        <boolgroup name="Pin 12" v="Do not initialize" />
+        <boolgroup name="Pin 13" v="Do not initialize" />
+        <boolgroup name="Pin 14" v="Do not initialize" />
+        <boolgroup name="Pin 15" v="Do not initialize" />
+        <boolgroup name="Pin 16" v="Do not initialize" />
+        <boolgroup name="Pin 17" v="Do not initialize" />
+        <boolgroup name="Pin 18" v="Do not initialize" />
+        <boolgroup name="Pin 19" v="Do not initialize" />
+        <boolgroup name="Pin 20" v="Do not initialize" />
+        <boolgroup name="Pin 21" v="Do not initialize" />
+        <boolgroup name="Pin 22" v="Do not initialize" />
+        <boolgroup name="Pin 23" v="Do not initialize" />
+        <boolgroup name="Pin 24" v="Do not initialize" />
+        <boolgroup name="Pin 25" v="Do not initialize" />
+        <boolgroup name="Pin 26" v="Do not initialize" />
+        <boolgroup name="Pin 27" v="Do not initialize" />
+      </group>
+      <group name="Pin selection/routing">
+        <boolgroup name="Pin 0" v="Disabled" />
+        <boolgroup name="Pin 1" v="Disabled" />
+        <boolgroup name="Pin 2" v="Disabled" />
+        <boolgroup name="Pin 3" v="Disabled" />
+        <boolgroup name="Pin 4" v="Disabled" />
+        <boolgroup name="Pin 5" v="Disabled" />
+        <boolgroup name="Pin 6" v="Disabled" />
+        <boolgroup name="Pin 7" v="Disabled" />
+        <boolgroup name="Pin 8" v="Disabled" />
+        <boolgroup name="Pin 9" v="Disabled" />
+        <boolgroup name="Pin 10" v="Disabled" />
+        <boolgroup name="Pin 11" v="Disabled" />
+        <boolgroup name="Pin 12" v="Disabled" />
+        <boolgroup name="Pin 13" v="Disabled" />
+        <boolgroup name="Pin 14" v="Disabled" />
+        <boolgroup name="Pin 15" v="Disabled" />
+        <boolgroup name="Pin 16" v="Disabled" />
+        <boolgroup name="Pin 17" v="Disabled" />
+        <boolgroup name="Pin 18" v="Disabled" />
+        <boolgroup name="Pin 19" v="Disabled" />
+        <boolgroup name="Pin 20" v="Disabled" />
+        <boolgroup name="Pin 21" v="Disabled" />
+        <boolgroup name="Pin 22" v="Disabled" />
+        <boolgroup name="Pin 23" v="Disabled" />
+        <boolgroup name="Pin 24" v="Disabled" />
+        <boolgroup name="Pin 25" v="Disabled" />
+        <boolgroup name="Pin 26" v="Disabled" />
+        <boolgroup name="Pin 27" v="Disabled" />
+      </group>
+      <group name="Initialization">
+        <Call_Init_method v="yes" />
+      </group>
+    </Properties>
+    <Methods>
+      <Init v="generate code" />
+    </Methods>
+    <Events>
+      <EmptySection_DummyValue />
     </Events>
   </Bean>
 </PE_PROJECT_SETTINGS_DOCUMENTATION>

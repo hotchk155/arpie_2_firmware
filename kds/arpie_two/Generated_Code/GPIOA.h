@@ -7,7 +7,7 @@
 **     Version     : Component 01.006, Driver 01.06, CPU db: 3.00.000
 **     Repository  : Kinetis
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2017-02-19, 20:07, # CodeGen: 32
+**     Date/Time   : 2017-03-06, 16:06, # CodeGen: 43
 **     Abstract    :
 **          This file implements the GPIO (GPIOA) module initialization
 **          according to the Peripheral Initialization settings, and
@@ -52,7 +52,11 @@
 **            Pin 13                                       : Do not initialize
 **            Pin 14                                       : Do not initialize
 **            Pin 15                                       : Do not initialize
-**            Pin 16                                       : Do not initialize
+**            Pin 16                                       : Initialize
+**              Pin direction                              : Output
+**              Pin input                                  : Disabled
+**              Output value                               : 0
+**              Pull resistor                              : No initialization
 **            Pin 17                                       : Do not initialize
 **            Pin 18                                       : Do not initialize
 **            Pin 19                                       : Do not initialize

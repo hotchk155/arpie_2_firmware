@@ -7,7 +7,7 @@
 **     Version     : Component 01.006, Driver 01.06, CPU db: 3.00.000
 **     Repository  : Kinetis
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2017-02-19, 20:07, # CodeGen: 32
+**     Date/Time   : 2017-03-06, 16:06, # CodeGen: 43
 **     Abstract    :
 **          This file implements the GPIO (GPIOA) module initialization
 **          according to the Peripheral Initialization settings, and
@@ -52,7 +52,11 @@
 **            Pin 13                                       : Do not initialize
 **            Pin 14                                       : Do not initialize
 **            Pin 15                                       : Do not initialize
-**            Pin 16                                       : Do not initialize
+**            Pin 16                                       : Initialize
+**              Pin direction                              : Output
+**              Pin input                                  : Disabled
+**              Output value                               : 0
+**              Pull resistor                              : No initialization
 **            Pin 17                                       : Do not initialize
 **            Pin 18                                       : Do not initialize
 **            Pin 19                                       : Do not initialize
@@ -168,17 +172,21 @@
 */
 void GPIOA_Init(void)
 {
-  /* GPIOA_PDDR: PDD&=~0x0C00,PDD|=0xC1 */
+  /* GPIOA_PSOR: PTSO&=~0x00010000 */
+  GPIOA_PSOR &= (uint32_t)~(uint32_t)(GPIO_PSOR_PTSO(0x00010000));
+  /* GPIOA_PCOR: PTCO|=0x00010000 */
+  GPIOA_PCOR |= GPIO_PCOR_PTCO(0x00010000);
+  /* GPIOA_PDDR: PDD&=~0x0C00,PDD|=0x000100C1 */
   GPIOA_PDDR = (uint32_t)((GPIOA_PDDR & (uint32_t)~(uint32_t)(
                 GPIO_PDDR_PDD(0x0C00)
                )) | (uint32_t)(
-                GPIO_PDDR_PDD(0xC1)
+                GPIO_PDDR_PDD(0x000100C1)
                ));
-  /* GPIOA_PIDR: PID&=~0x0C00,PID|=0xC1 */
+  /* GPIOA_PIDR: PID&=~0x0C00,PID|=0x000100C1 */
   GPIOA_PIDR = (uint32_t)((GPIOA_PIDR & (uint32_t)~(uint32_t)(
                 GPIO_PIDR_PID(0x0C00)
                )) | (uint32_t)(
-                GPIO_PIDR_PID(0xC1)
+                GPIO_PIDR_PID(0x000100C1)
                ));
 }
 

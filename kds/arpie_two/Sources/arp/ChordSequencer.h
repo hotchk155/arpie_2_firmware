@@ -18,17 +18,11 @@
 class CChordSequencer : public IUiComponent, public INoteProvider {
 
 	byte m_ui_repaint:1;
-	byte m_edit_mode:3;
 	byte m_play_index;
 	byte m_edit_index;
 	byte m_ver;
 	int m_tick_count;
 public:
-	enum {
-		CHORD_DIRECT,
-		CHORD_NAME,
-		CHORD_FAMILY
-	};
 	enum {
 		CHORD_MAJ,
 		CHORD_MIN,
@@ -47,6 +41,7 @@ public:
 		CHORD chord[MAX_STEPS];
 		byte num_steps;
 		int rate;
+		byte edit_mode;
 	} CONFIG;
 	CONFIG m_cfg;
 
@@ -59,8 +54,27 @@ public:
 		m_ver = 0;
 		m_tick_count = 0;
 		m_cfg.rate = 24 * 8;
-		m_edit_mode = CHORD_NAME;
+		m_cfg.edit_mode = params::CHORD_MODE_NAME;
 	}
+
+	void set_edit_mode(byte value) {
+		if(value != m_cfg.edit_mode) {
+			memset(&m_cfg.chord,0,sizeof m_cfg.chord);
+		}
+		m_cfg.edit_mode = value;
+	}
+	byte get_edit_mode() {
+		return m_cfg.edit_mode;
+	}
+	void set_rate(byte value) {
+		m_cfg.rate = 24*value;
+	}
+	byte get_rate() {
+		return m_cfg.rate/24;
+	}
+
+
+
 	virtual void ui_init() {
 	}
 	virtual void ui_done() {
@@ -80,9 +94,9 @@ public:
 		}
 		CHORD chord = m_cfg.chord[index];
 
-		switch(m_edit_mode) {
+		switch(m_cfg.edit_mode) {
 			///////////////////////////////////////////////////////////////////
-			case CHORD_DIRECT:
+			case params::CHORD_MODE_DIRECT:
 			{
 				const byte ofs[13] = {22,21,19,18,16,13,12,10,9,7,6,4,1};
 				for(i=0; i<13; ++i) {
@@ -109,16 +123,11 @@ public:
 				}
 				break;
 			}
-			case CHORD_NAME:
+			case params::CHORD_MODE_NAME:
 			{
 				char name[7];
 				char *pos = name;
-				if(!chord) {
-					*pos++ = '.';
-					*pos++ = '.';
-					*pos++ = '.';
-				}
-				else {
+				if(chord) {
 					switch((chord-1) & 0xFF) {
 					case 0: *pos++ = 'C'; break;
 					case 1: *pos++ = 'C'; *pos++ = '#'; break;
@@ -182,14 +191,14 @@ public:
 	virtual byte ui_needs_repaint() {
 		return m_ui_repaint;
 	}
-	virtual byte ui_on_key(byte key, byte modifiers) {
-		if(key==CKeyboard::KEY_B1 && modifiers==CKeyboard::SHIFT_MODIFIER) {
+	virtual byte ui_on_key(byte key_event) {
+		if(key_event==(CKeyboard::SHIFT|CKeyboard::KEY_B1)) {
 			m_cfg.chord[m_edit_index] = 0;
 		}
-		else if(m_edit_mode == CHORD_DIRECT) {
+		else if(m_cfg.edit_mode == params::CHORD_MODE_DIRECT) {
 
 			uint32_t mask;
-			switch(key) {
+			switch(key_event) {
 			case CKeyboard::KEY_B1: mask=(((uint32_t)1)<<0); break;
 			case CKeyboard::KEY_A1: mask=(((uint32_t)1)<<1); break;
 			case CKeyboard::KEY_B2: mask=(((uint32_t)1)<<2); break;
@@ -220,10 +229,10 @@ public:
 			}
 			m_cfg.chord[m_edit_index] ^= mask;
 		}
-		else if(m_edit_mode == CHORD_NAME) {
+		else if(m_cfg.edit_mode == params::CHORD_MODE_NAME) {
 
 			CHORD chord = m_cfg.chord[m_edit_index];
-			switch(key) {
+			switch(key_event) {
 			case CKeyboard::KEY_B1: chord = (chord & 0xFF00)|1; break;
 			case CKeyboard::KEY_A1: chord = (chord & 0xFF00)|2; break;
 			case CKeyboard::KEY_B2: chord = (chord & 0xFF00)|3; break;
@@ -236,14 +245,15 @@ public:
 			case CKeyboard::KEY_B6: chord = (chord & 0xFF00)|10; break;
 			case CKeyboard::KEY_A5: chord = (chord & 0xFF00)|11; break;
 			case CKeyboard::KEY_B7: chord = (chord & 0xFF00)|12; break;
-			case CKeyboard::KEY_B8: chord = (chord & 0xFF00)|13; break;
 			default:
 				return 0;
 			}
 			if(m_cfg.chord[m_edit_index]) {
 				chord &= 0xFF;
-				if((m_cfg.chord[m_edit_index]>>8) < CHORD_DIM) {
-					chord |= ((m_cfg.chord[m_edit_index]>>8)+1) << 8;
+				if((byte)m_cfg.chord[m_edit_index] == chord) {
+					if((m_cfg.chord[m_edit_index]>>8) < CHORD_DIM) {
+						chord |= ((m_cfg.chord[m_edit_index]>>8)+1) << 8;
+					}
 				}
 			}
 			m_cfg.chord[m_edit_index] = chord;
@@ -298,14 +308,14 @@ public:
 			}
 		}
 
-		if(m_edit_mode == CHORD_DIRECT) {
+		if(m_cfg.edit_mode == params::CHORD_MODE_DIRECT) {
 			for(byte i=0; i<13; ++i) {
 				if(m_cfg.chord[index] & (((uint32_t)1)<<i)) {
 					notes->insert_midi_note(48 + i);
 				}
 			}
 		}
-		else if(m_edit_mode == CHORD_NAME) {
+		else if(m_cfg.edit_mode == params::CHORD_MODE_NAME) {
 			if(m_cfg.chord[index]) {
 				byte root = (m_cfg.chord[index] & 0xFF) + 47;
 				byte chord_type =m_cfg.chord[index]>>8;

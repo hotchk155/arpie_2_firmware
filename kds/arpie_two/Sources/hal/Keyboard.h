@@ -55,6 +55,7 @@ public:
 		KEYBIT_SHIFT = KEYBIT_D1,
 	};
 
+	/*
 	enum {
 		CMD_ARPTYPE	= KEY_B1,
 		CMD_OCTSPAN	= KEY_B2,
@@ -76,5 +77,6 @@ public:
 		CMD_TRIG_OCTAVE = KEY_A4,
 		CMD_TRIG_CHORD = KEY_A5
 	};
+	*/
 };
 #endif /* SOURCES_KEYBOARD_H_ */

@@ -288,7 +288,7 @@
     </GenFiles>
     <SignalListFile>Documentation\arpie_two_SIGNALS.txt</SignalListFile>
     <DestinationCompiler>GNUC</DestinationCompiler>
-    <ProjectModificationStamp>23</ProjectModificationStamp>
+    <ProjectModificationStamp>24</ProjectModificationStamp>
   </Options>
   <CpuID_6>
     <Generated>true</Generated>
@@ -756,8 +756,8 @@
     <GenComponentVersion>01.006</GenComponentVersion>
     <GenDriverVersion>01.06</GenDriverVersion>
     <GenEventModule />
-    <HeaderAge>1246994676</HeaderAge>
-    <CodeAge>1246994676</CodeAge>
+    <HeaderAge>1248231648</HeaderAge>
+    <CodeAge>1248231648</CodeAge>
     <AsemblAge>-1</AsemblAge>
     <GenNumMethods>1</GenNumMethods>
     <Init>true</Init>
@@ -771,15 +771,15 @@
       <MethodPos0>Init</MethodPos0>
       <MethodType>method</MethodType>
       <ModuleType>Header</ModuleType>
-      <LineBeg>163</LineBeg>
-      <LineEnd>177</LineEnd>
+      <LineBeg>167</LineBeg>
+      <LineEnd>181</LineEnd>
     </MethodPos>
     <MethodPos>
       <MethodPos1>Init</MethodPos1>
       <MethodType>method</MethodType>
       <ModuleType>Code</ModuleType>
-      <LineBeg>155</LineBeg>
-      <LineEnd>182</LineEnd>
+      <LineBeg>159</LineBeg>
+      <LineEnd>190</LineEnd>
     </MethodPos>
     <GenExtraFilesCount>1</GenExtraFilesCount>
     <ExtraFile0>Documentation\doxygen\GPIOA_component.txt</ExtraFile0>

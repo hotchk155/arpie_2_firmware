@@ -46,6 +46,9 @@ public:
 			if(m_info->values) {
 				CDisplay::instance().format_text(m_info->values[value], raster);
 			}
+			else if(m_info->min_value<0){
+				CDisplay::instance().format_bipolar2digit(value, raster);
+			}
 			else {
 				CDisplay::instance().format_3digit(value, raster);
 			}
@@ -61,8 +64,8 @@ public:
 		m_needs_repaint = 0;
 		return r;
 	}
-	byte ui_on_key(byte key, byte modifiers) {
-		if(key == CKeyboard::KEY_D1) {
+	byte ui_on_key(byte key_event) {
+		if(key_event == CKeyboard::KEY_D1) {
 			// press shift key to see current value
 			m_needs_repaint = 1;
 			m_edit_in_progress = 1;

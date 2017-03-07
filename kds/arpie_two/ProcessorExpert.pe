@@ -3,7 +3,7 @@
   <Header>
     <Name>arpie_two</Name>
     <SavedBy>Jason</SavedBy>
-    <ModificationStamp>23</ModificationStamp>
+    <ModificationStamp>24</ModificationStamp>
     <Date>2017-02-11</Date>
     <IDE>Eclipse IDE</IDE>
     <PEversion>1.12.2.RT7_b1550-0615</PEversion>
@@ -8726,16 +8726,16 @@
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
         <PropertyModelIsAutomatic>false</PropertyModelIsAutomatic>
-        <Value>false</Value>
-        <Expanded>false</Expanded>
+        <Value>true</Value>
+        <Expanded>true</Expanded>
       </ItemState>
       <ItemState>
         <ItemSymbol>PinOutput16</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
         <PropertyModelIsAutomatic>false</PropertyModelIsAutomatic>
-        <Index>2</Index>
-        <EnumSymbVal>noInit</EnumSymbVal>
+        <Index>1</Index>
+        <EnumSymbVal>enabled</EnumSymbVal>
       </ItemState>
       <ItemState>
         <ItemSymbol>PinInput16FeatureCondGroup</ItemSymbol>
@@ -8756,8 +8756,8 @@
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
         <PropertyModelIsAutomatic>false</PropertyModelIsAutomatic>
-        <Index>0</Index>
-        <EnumSymbVal>NotChange</EnumSymbVal>
+        <Index>1</Index>
+        <EnumSymbVal>0</EnumSymbVal>
       </ItemState>
       <ItemState>
         <ItemSymbol>OpenDrainEnable16FeatureCondGroup</ItemSymbol>

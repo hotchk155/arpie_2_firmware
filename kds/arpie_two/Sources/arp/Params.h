@@ -30,9 +30,8 @@ enum {
 };
 typedef struct {
 	const char *name;
-	const byte min_value;
-	const byte max_value;
-	//const byte flags;
+	const short min_value;
+	const short max_value;
 	const char **values;
 } INFO;
 
@@ -51,22 +50,25 @@ enum {
 	SEQUENCE,
 	CHORD_EDIT,
 	SEQ_RATE,
-	GATE_LEN,
 	MIDI_IN_CHAN,
 	MIDI_OUT_CHAN,
 	ARP_TYPE,
 	BPM,
 	OCT_SPAN,
 	SEQ_MUTATE,
-	CHAIN,
+
+	VEL,
+	ACC_VEL,
+	GATE,
+	GATE_LONG,
+	SHIFT1,
+	SHIFT2,
+	CHORDMODE,
+	CHORDRATE,
+
 	ENUM_MAX
 };
 
-enum {
-	CHAIN_A,
-	CHAIN_B,
-	CHAIN_ENUM_MAX
-};
 
 enum {
 	ARPTYPE_UP = 0,
@@ -172,6 +174,12 @@ enum {
 	SCALE_ADJUST_FLAT,
 	SCALE_ADJUST_SHARP,
 	SCALE_ADJUST_ENUM_MAX
+};
+
+enum {
+	CHORD_MODE_NAME,
+	CHORD_MODE_DIRECT,
+	CHORD_MODE_ENUM_MAX
 };
 
 }; // namespace params

@@ -390,7 +390,12 @@ PE_DEBUGHALT();
         <boolgroup name="Pin 13" v="Do not initialize" />
         <boolgroup name="Pin 14" v="Do not initialize" />
         <boolgroup name="Pin 15" v="Do not initialize" />
-        <boolgroup name="Pin 16" v="Do not initialize" />
+        <boolgroup name="Pin 16" v="Initialize">
+          <Pin_direction v="Output" />
+          <Pin_input v="Disabled" />
+          <Output_value v="0" />
+          <Pull_resistor v="No initialization" />
+        </boolgroup>
         <boolgroup name="Pin 17" v="Do not initialize" />
         <boolgroup name="Pin 18" v="Do not initialize" />
         <boolgroup name="Pin 19" v="Do not initialize" />

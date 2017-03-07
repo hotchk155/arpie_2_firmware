@@ -34,29 +34,25 @@ class CNotePlayer {
 public:
 	typedef struct {
 		byte chan;
-		byte normal_velocity;
-		byte accent_velocity;
-		byte mode;
+		byte scale_mode;
 		uint16_t scale_mask;
-		byte root;
-		byte force_to_scale_mode;
+		byte scale_root;
+
 	} CONFIG;
 	CONFIG m_cfg;
 
 	//////////////////////////////////////////////////////////////////////
 	void init(CMidiOut *midi_out, byte chan) {
-		m_note.m_num_pitches = 0;
+		m_note.num_pitches = 0;
 		m_midi_out = midi_out;
 		m_cfg.chan = chan;
-		m_cfg.normal_velocity = 100;
-		m_cfg.accent_velocity = 127;
-		set_mode(params::SCALE_CHROMATIC);
+		set_scale_mode(params::SCALE_CHROMATIC);
+		set_scale_root(0);
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	void set_mode(byte mode) {
-		m_cfg.mode = mode;
-		switch(mode) {
+	void set_scale_mode(byte scale_mode) {
+		switch(scale_mode) {
 		case params::SCALE_IONIAN:
 			m_cfg.scale_mask = IONIAN;
 			break;
@@ -86,23 +82,24 @@ public:
 			m_cfg.scale_mask = CHROMATIC;
 			break;
 		}
+		m_cfg.scale_mode = scale_mode;
 	}
 	//////////////////////////////////////////////////////////////////////
-	byte get_mode() {
-		return m_cfg.mode;
+	byte get_scale_mode() {
+		return m_cfg.scale_mode;
 	}
 	//////////////////////////////////////////////////////////////////////
-	void set_root(byte scale_root) {
-		m_cfg.root = scale_root%12;
+	void set_scale_root(byte scale_root) {
+		m_cfg.scale_root = scale_root%12;
 	}
 	//////////////////////////////////////////////////////////////////////
-	byte get_root(byte scale_root) {
-		return m_cfg.root;
+	byte get_scale_root(byte scale_root) {
+		return m_cfg.scale_root;
 	}
 	//////////////////////////////////////////////////////////////////////
 	// Stop all playing notes
 	void note_stop() {
-		if(m_note.m_num_pitches) {
+		if(m_note.num_pitches) {
 			midi::MSG msg;
 			msg.type = midi::MSG_2PARAM;
 			msg.status = midi::CH_NOTE_ON | m_cfg.chan;
@@ -110,11 +107,11 @@ public:
 
 			// stop the note playing.. we use convention of NOTE ON with zero
 			// velocity to turn a note off (allow efficient use of running status)
-			for(int i=0; i<m_note.m_num_pitches; ++i) {
-				msg.param1 = PITCH_2_MIDI(m_note.m_pitch[i]);
+			for(int i=0; i<m_note.num_pitches; ++i) {
+				msg.param1 = PITCH_2_MIDI(m_note.pitch[i]);
 				m_midi_out->msg(&msg);
 			}
-			m_note.m_num_pitches = 0;
+			m_note.num_pitches = 0;
 		}
 	}
 
@@ -154,18 +151,18 @@ public:
 		midi::MSG msg;
 		msg.type = midi::MSG_2PARAM;
 		msg.status = midi::CH_NOTE_ON | m_cfg.chan;
-		msg.param2 = note->m_accent ? m_cfg.accent_velocity : m_cfg.normal_velocity;
-		if(m_note.m_num_pitches && !m_note.m_tie) {
+		msg.param2 = note->velocity;
+		if(m_note.num_pitches && !m_note.tie) {
 			note_stop();
 		}
-		for(int i=0; i<note->m_num_pitches; ++i) {
-			msg.param1 = PITCH_2_MIDI(note->m_pitch[i]);
+		for(int i=0; i<note->num_pitches; ++i) {
+			msg.param1 = PITCH_2_MIDI(note->pitch[i]);
 			m_midi_out->msg(&msg);
 		}
-		if(m_note.m_num_pitches) {
+		if(m_note.num_pitches) {
 			note_stop();
 		}
-		m_duration = m_note.m_ticks;
+		m_duration = m_note.duration;
 	}
 
 	//////////////////////////////////////////////////////////////////////

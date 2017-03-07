@@ -43,6 +43,7 @@ extern uint32_t g_millis;
 #include "Params.h"
 #include "Interfaces.h"
 #include "UiParamEdit.h"
+#include "UiTitle.h"
 #include "MidiIn.h"
 #include "MidiOut.h"
 #include "NotePlayer.h"
@@ -57,6 +58,11 @@ class CArpie : public IParams {
 	enum {
 		NUM_CHAINS = 2
 	};
+	enum {
+		CTX_ARP,
+		CTX_TRIG,
+		CTX_CHORD
+	};
 	typedef struct {
 		INoteProvider *note_provider;
 		CArpNotes seq;
@@ -69,6 +75,7 @@ class CArpie : public IParams {
 
 	ARPCHAIN m_chain[NUM_CHAINS];
 	byte m_cur_chain;
+	byte m_ui_context;
 
 	CEncoder m_encoder;
 	CClockInternal m_clock_internal;
@@ -77,13 +84,13 @@ class CArpie : public IParams {
 	CChordCatcherMidi m_chord_catcher_midi;
 	CChordSequencer m_chord_sequencer;
 	CUIParamEdit m_param_edit;
-
+	CUiTitle m_title;
 	IUiComponent *m_ui;
 
 
 	volatile byte m_ticked;
 	byte m_key_modifiers;
-
+	byte m_param;
 	byte m_count_24ppqn;
 
 public:
@@ -107,6 +114,14 @@ public:
 		chain->note_provider = &m_chord_sequencer;
 	}
 
+	void toggle_chain() {
+		if(++m_cur_chain >= NUM_CHAINS) {
+			m_cur_chain = 0;
+		}
+		CLeds::instance().ab_led(m_cur_chain);
+		m_title.m_mode = (m_cur_chain == 0) ? CUiTitle::ARP_A : CUiTitle::ARP_B;
+		m_ui = &m_title;
+	}
 
 	void init() {
 		for(int i=0; i<NUM_CHAINS; ++i) {
@@ -121,7 +136,11 @@ public:
 		m_chord_catcher_midi.init();
 		//m_chord_catcher_midi.test();
 		CDisplay::instance().init();
-		edit_param(params::SEQUENCE);
+		m_param = params::SEQUENCE;
+		m_ui_context = CTX_ARP;
+		m_title.m_mode = CUiTitle::TITLE1;
+		m_ui = &m_title;
+		update_display();
 	}
 
 	void update_display() {
@@ -135,25 +154,114 @@ public:
 	/////////////////////////////////////////////////////////////////////////
 	void on_key(byte key, byte modifiers) {
 
-		if(!m_ui->ui_on_key(key,modifiers)) {
-			if(!(key & CKeyboard::KEY_RELEASE)) { // not key release event
-				byte key_event = key;
-				if(modifiers == CKeyboard::SHIFT_MODIFIER) {
-					key_event |= CKeyboard::SHIFT;
-				}
+		if(key & CKeyboard::KEY_RELEASE) {
+			switch(key & ~CKeyboard::KEY_RELEASE) {
+			case CKeyboard::KEY_D2: edit_param(m_param); break;
+			default: return;
+			}
+			update_display();
+		}
+		else {
+			byte key_event = key;
+			if(modifiers == CKeyboard::SHIFT_MODIFIER) {
+				key_event |= CKeyboard::SHIFT;
+			}
+
+			if(!m_ui->ui_on_key(key_event)) {
 				switch(key_event) {
-				case CKeyboard::CMD_ARPTYPE: edit_param(params::ARP_TYPE); break;
-				case CKeyboard::CMD_OCTSPAN: edit_param(params::OCT_SPAN); break;
-				//case CKeyboard::CMD_OCTSHIFT: edit_param(params::OCT_SHIFT); break;
-				case CKeyboard::CMD_MUTATE: edit_param(params::SEQ_MUTATE); break;
-				case CKeyboard::CMD_BPM: edit_param(params::BPM); break;
-				case CKeyboard::CMD_TRIGS: edit_param(params::TRIGS); break;
-				case CKeyboard::CMD_RATE: edit_param(params::SEQ_RATE); break;
-				case CKeyboard::CMD_AB: edit_param(params::CHAIN); break;
-				case CKeyboard::CMD_CHORD: edit_param(params::CHORD_EDIT); break;
-				//case CKeyboard::CMD_GATE: edit_param(params::SEQ_GATE); break;
-				//case CKeyboard::CMD_VEL: edit_param(params::SEQ_VEL); break;
-				//case CKeyboard::CMD_ACCVEL: edit_param(params::SEQ_ACCVEL); break;
+
+				//////////////////////////////////////////////////////////////
+				// ROW A
+
+				//////////////////////////////////////////////////////////////
+				// ROW B
+				case CKeyboard::KEY_B2:
+					if(m_ui_context == CTX_ARP) {
+						edit_param(params::ARP_TYPE);
+					}
+					break;
+				case CKeyboard::KEY_B3:
+					if(m_ui_context == CTX_ARP) {
+						edit_param(params::OCT_SPAN);
+					}
+					break;
+				case CKeyboard::KEY_B4:
+					if(m_ui_context == CTX_ARP) {
+						edit_param(params::SEQ_MUTATE);
+					}
+					break;
+				case CKeyboard::KEY_B5:
+					if(m_ui_context == CTX_ARP) {
+						edit_param(params::SEQ_RATE);
+					}
+					break;
+
+
+				//////////////////////////////////////////////////////////////
+				// SHIFTED ROW B
+				case CKeyboard::SHIFT|CKeyboard::KEY_B1:
+					if(m_ui_context == CTX_TRIG) {
+						edit_param(params::VEL);
+					}
+					break;
+				case CKeyboard::SHIFT|CKeyboard::KEY_B2:
+					if(m_ui_context == CTX_TRIG) {
+						edit_param(params::ACC_VEL);
+					}
+					else if(m_ui_context == CTX_CHORD) {
+						edit_param(params::CHORDMODE);
+					}
+					break;
+				case CKeyboard::SHIFT|CKeyboard::KEY_B3:
+					if(m_ui_context == CTX_TRIG) {
+						edit_param(params::GATE);
+					}
+					break;
+				case CKeyboard::SHIFT|CKeyboard::KEY_B4:
+					if(m_ui_context == CTX_TRIG) {
+						edit_param(params::GATE_LONG);
+					}
+					else if(m_ui_context == CTX_CHORD) {
+						edit_param(params::CHORDRATE);
+					}
+					break;
+				case CKeyboard::SHIFT|CKeyboard::KEY_B5:
+					if(m_ui_context == CTX_TRIG) {
+						edit_param(params::SHIFT1);
+					}
+					break;
+				case CKeyboard::SHIFT|CKeyboard::KEY_B6:
+					if(m_ui_context == CTX_TRIG) {
+						edit_param(params::SHIFT2);
+					}
+					break;
+
+				//////////////////////////////////////////////////////////////
+				// ROW C
+				case CKeyboard::KEY_C2:
+					break;
+				case CKeyboard::KEY_C3:
+					edit_param(params::BPM);
+					break;
+
+
+				//////////////////////////////////////////////////////////////
+				// ROW D
+				case CKeyboard::KEY_D2:
+					toggle_chain();
+					break;
+				case CKeyboard::KEY_D3:
+					m_ui_context = CTX_CHORD;
+					edit_param(params::CHORD_EDIT);
+					break;
+				case CKeyboard::KEY_D4:
+					m_ui_context = CTX_ARP;
+					edit_param(params::SEQUENCE);
+					break;
+				case CKeyboard::KEY_D5:
+					m_ui_context = CTX_TRIG;
+					edit_param(params::TRIGS);
+					break;
 
 				default: return;
 				}
@@ -253,12 +361,17 @@ public:
 	}
 
 	int edit_param(int param) {
+		m_param = param;
 		if(m_ui) {
 			m_ui->ui_done();
 		}
 		switch(param) {
 		case params::SEQUENCE:
+			m_chain[m_cur_chain].sequencer.m_ui_show_path = 1;
+			m_ui = &m_chain[m_cur_chain].sequencer;
+			break;
 		case params::TRIGS:
+			m_chain[m_cur_chain].sequencer.m_ui_show_path = 0;
 			m_ui = &m_chain[m_cur_chain].sequencer;
 			break;
 		case params::CHORD_EDIT:
@@ -270,11 +383,17 @@ public:
 		case params::OCT_SPAN:
 		case params::SEQ_RATE:
 		case params::SEQ_MUTATE:
-		case params::CHAIN:
+		case params::VEL:
+		case params::ACC_VEL:
+		case params::GATE:
+		case params::GATE_LONG:
+		case params::SHIFT1:
+		case params::SHIFT2:
+		case params::CHORDMODE:
+		case params::CHORDRATE:
 			m_param_edit.set_param(param);
 			m_ui = &m_param_edit;
 			break;
-
 		}
 		m_ui->ui_init();
 	}
@@ -290,8 +409,23 @@ public:
 			return m_chain[m_cur_chain].sequencer.m_cfg.rate;
 		case params::SEQ_MUTATE:
 			return m_chain[m_cur_chain].mutator.m_cfg.m_mode;
-		case params::CHAIN:
-			return m_cur_chain;
+		case params::VEL:
+			return m_chain[m_cur_chain].sequencer.m_cfg.normal_velocity;
+		case params::ACC_VEL:
+			return m_chain[m_cur_chain].sequencer.m_cfg.accent_velocity;
+		case params::GATE:
+			return m_chain[m_cur_chain].sequencer.m_cfg.normal_gate;
+		case params::GATE_LONG:
+			return m_chain[m_cur_chain].sequencer.m_cfg.long_gate;
+		case params::SHIFT1:
+			return m_chain[m_cur_chain].sequencer.m_cfg.shift_interval_1;
+		case params::SHIFT2:
+			return m_chain[m_cur_chain].sequencer.m_cfg.shift_interval_2;
+		case params::CHORDMODE:
+			return m_chord_sequencer.get_edit_mode();
+		case params::CHORDRATE:
+			return m_chord_sequencer.get_rate();
+
 		}
 	}
 	void set_param(int param, int value) {
@@ -314,9 +448,29 @@ public:
 			m_chain[m_cur_chain].mutator.m_cfg.m_mode = value;
 			m_chain[m_cur_chain].notes_ver = -1;
 			break;
-		case params::CHAIN:
-			m_cur_chain = value;
+		case params::VEL:
+			m_chain[m_cur_chain].sequencer.m_cfg.normal_velocity = value;
 			break;
+		case params::ACC_VEL:
+			m_chain[m_cur_chain].sequencer.m_cfg.accent_velocity = value;
+			break;
+		case params::GATE:
+			m_chain[m_cur_chain].sequencer.m_cfg.normal_gate = value;
+			break;
+		case params::GATE_LONG:
+			m_chain[m_cur_chain].sequencer.m_cfg.long_gate = value;
+			break;
+		case params::SHIFT1:
+			m_chain[m_cur_chain].sequencer.m_cfg.shift_interval_1 = value;
+			break;
+		case params::SHIFT2:
+			m_chain[m_cur_chain].sequencer.m_cfg.shift_interval_2 = value;
+			break;
+		case params::CHORDMODE:
+			m_chord_sequencer.set_edit_mode(value);
+			break;
+		case params::CHORDRATE:
+			m_chord_sequencer.set_rate(value);
 		}
 	}
 };

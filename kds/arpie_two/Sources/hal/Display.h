@@ -211,6 +211,21 @@ public:
 		format_digit(raster, n, 2);
 	}
 
+	void format_bipolar2digit(int n, uint32_t *raster) {
+		if(n<0) {
+			n=-n;
+			format_char(raster, '-', 0);
+		}
+		else {
+			format_char(raster, '+', 0);
+		}
+
+		n %= 100;
+		format_digit(raster, n/10, 1);
+		n%=10;
+		format_digit(raster, n, 2);
+	}
+
 	void format_text(const char *sz, uint32_t *raster) {
 		int pos = 0;
 		while(*sz && pos <6) {

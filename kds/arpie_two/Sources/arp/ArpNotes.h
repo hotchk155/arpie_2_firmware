@@ -24,13 +24,13 @@ typedef uint16_t PITCH;
 
 typedef struct {
 	enum {
-		MAX_PITCHES = 10
+		MAX_PITCHES = 10,
 	};
-	PITCH m_pitch[MAX_PITCHES];
-	byte m_num_pitches;
-	byte m_accent:1;
-	byte m_tie:1;
-	byte m_ticks;	// 24PPQN ticks duration
+	PITCH pitch[MAX_PITCHES];
+	byte num_pitches;
+	byte velocity;
+	byte duration;
+	byte tie:1;
 } ARP_NOTE;
 
 class CArpNotes {
@@ -57,6 +57,13 @@ public:
 	///////////////////////////////////////////////////////////////
 	CArpNotes() {
 		init();
+	}
+
+	CArpNotes(const CArpNotes& other) {
+		m_cfg.num_pitches = other.m_cfg.num_pitches;
+		m_cfg.num_notes = other.m_cfg.num_notes;
+		memcpy(m_cfg.note, other.m_cfg.note, sizeof(m_cfg.note));
+		memcpy(m_cfg.pitch, other.m_cfg.pitch, sizeof(m_cfg.pitch));
 	}
 
 	///////////////////////////////////////////////////////////////
@@ -103,10 +110,10 @@ public:
 			int index = m_cfg.note[i].index;
 			int count = m_cfg.note[i].count;
 			int j;
-			for(j = 0; j<count && result->m_num_pitches < ARP_NOTE::MAX_PITCHES - 1; ++j) {
+			for(j = 0; j<count && result->num_pitches < ARP_NOTE::MAX_PITCHES - 1; ++j) {
 				PITCH pitch = m_cfg.pitch[index++] + transpose;
 				if(pitch >= MIN_PITCH && pitch <= MAX_PITCH) {
-					result->m_pitch[result->m_num_pitches++] = pitch;
+					result->pitch[result->num_pitches++] = pitch;
 				}
 			}
 		}
@@ -278,8 +285,24 @@ public:
 				t[count++] = m_cfg.pitch[i];
 			}
 		}
-		memcpy(m_cfg.pitch, t, sizeof m_cfg.num_pitches);
+
+		memcpy(m_cfg.pitch, t, sizeof(m_cfg.pitch));
+		m_cfg.num_pitches = count;
 		m_cfg.num_notes = 1;
+	}
+
+	///////////////////////////////////////////////////////////////
+	// converts a sequence to a single chord hit
+	void get_chord(ARP_NOTE *result) {
+		CArpNotes t(*this);
+		t.to_chord();
+		memcpy(result->pitch, t.m_cfg.pitch, sizeof(result->pitch));
+		if(t.m_cfg.num_pitches > ARP_NOTE::MAX_PITCHES) {
+			result->num_pitches = ARP_NOTE::MAX_PITCHES;
+		}
+		else {
+			result->num_pitches = t.m_cfg.num_pitches;
+		}
 	}
 };
 

@@ -18,7 +18,6 @@
 class CSequencer : public IUiComponent {
 friend class CSequencerUiPath;
 
-	byte m_ui_show_path:1;
 	byte m_ui_repaint:1;
 	byte m_edit_trig;
 //	byte m_flags;
@@ -37,6 +36,19 @@ friend class CSequencerUiPath;
 
 	enum {
 		PATH_LEN = 16
+	};
+
+	enum {
+		SHIFT_NONE,
+		SHIFT_1,
+		SHIFT_2,
+		SHIFT_CHORD
+	};
+
+	enum {
+		GLIDE_NONE,
+		GLIDE_LONG,
+		GLIDE_TIED
 	};
 
 	// the stored path for display - each element in the
@@ -68,20 +80,25 @@ public:
 	  RATE_16T  = 4,
 	  RATE_32   = 3
 	};
-
 	typedef struct {
 		byte enabled:1;
 		byte accent:1;
-		byte glide:1;
-		byte octave:1;
-		byte chord:1;
+		byte glide:2;
+		byte shift:2;
 	} TRIG;
 	typedef struct {
 		TRIG trigs[MAX_TRIG];
 		byte num_trigs;
 		byte rate;
+		byte normal_velocity;
+		byte accent_velocity;
+		byte normal_gate;
+		byte long_gate;
+		char shift_interval_1;
+		char shift_interval_2;
 	} CONFIG;
 	CONFIG m_cfg;
+	byte m_ui_show_path:1;
 
 
 	CSequencer() {
@@ -93,16 +110,23 @@ public:
 		m_seq = seq;
 		m_note_player = note_player;
 		m_cfg.rate = RATE_16;
-		memset(m_cfg.trigs, 0, sizeof(m_cfg.trigs));
+		m_cfg.normal_velocity = 100;
+		m_cfg.accent_velocity = 127;
+		m_cfg.normal_gate = 100;
+		m_cfg.long_gate = 127;
+		m_cfg.shift_interval_1 = 12;
+		m_cfg.shift_interval_2 = 24;
 		for(int i=0; i<MAX_TRIG;++i) {
 			m_cfg.trigs[i].enabled = 1;
 		}
 		m_cfg.num_trigs = MAX_TRIG;
+
 		m_trig_index = 0;
 		m_index = 0;
 		m_edit_trig = 0;
 		m_ui_repaint = 0;
 		m_ui_show_path = 0;
+
 		prepare_path();
 	}
 
@@ -117,10 +141,55 @@ public:
 			m_trig_index = m_index % m_cfg.num_trigs;
 			if(m_cfg.trigs[m_trig_index].enabled) {
 				ARP_NOTE note;
-				m_seq->get_note(m_index % m_seq->len(),0,&note);
-				note.m_accent = m_cfg.trigs[m_trig_index].accent;
-				note.m_ticks = m_cfg.rate;
-				note.m_tie = m_cfg.trigs[m_trig_index].glide;
+				switch(m_cfg.trigs[m_trig_index].glide ) {
+				case SHIFT_1:
+					m_seq->get_note(m_index % m_seq->len(),m_cfg.shift_interval_1,&note);
+					break;
+				case SHIFT_2:
+					m_seq->get_note(m_index % m_seq->len(),m_cfg.shift_interval_2,&note);
+					break;
+				case SHIFT_CHORD:
+					m_seq->get_chord(&note);
+					break;
+				case SHIFT_NONE:
+					m_seq->get_note(m_index % m_seq->len(),0,&note);
+					break;
+				}
+
+
+				if(m_cfg.trigs[m_trig_index].accent) {
+					note.velocity = m_cfg.accent_velocity;
+				}
+				else {
+					note.velocity = m_cfg.normal_velocity;
+				}
+
+				switch(m_cfg.trigs[m_trig_index].glide) {
+					case GLIDE_LONG:
+						note.duration = (m_cfg.long_gate * m_cfg.rate)/128;
+						break;
+					case GLIDE_TIED:
+						note.tie = 1;
+						break;
+					case GLIDE_NONE:
+					default:
+						note.duration = (m_cfg.normal_gate * m_cfg.rate)/128;
+						break;
+				};
+
+				switch(m_cfg.trigs[m_trig_index].shift) {
+					case GLIDE_LONG:
+						note.duration = (m_cfg.long_gate * m_cfg.rate)/128;
+						break;
+					case GLIDE_TIED:
+						note.tie = 1;
+						break;
+					case GLIDE_NONE:
+					default:
+						note.duration = (m_cfg.normal_gate * m_cfg.rate)/128;
+						break;
+				};
+
 				m_note_player->note_start(&note);
 			}
 			if(m_trig_index == 0) {
@@ -221,7 +290,7 @@ public:
 							if(m_cfg.trigs[which_trig].accent) {
 								raster[0] |= left_bit;
 							}
-							if(m_cfg.trigs[which_trig].octave||m_cfg.trigs[which_trig].chord) {
+							if(m_cfg.trigs[which_trig].shift) {
 								raster[0] |= right_bit;
 							}
 							if(m_cfg.trigs[which_trig].glide) {
@@ -274,34 +343,79 @@ public:
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
-	byte ui_on_key(byte key, byte modifiers) {
-		switch(key) {
-		case CKeyboard::CMD_TRIG_ENABLE:
-			m_cfg.trigs[m_edit_trig].enabled = !m_cfg.trigs[m_edit_trig].enabled;
-			m_ui_repaint = 1;
-			return 1;
-		case CKeyboard::CMD_TRIG_ACCENT:
-			m_cfg.trigs[m_edit_trig].accent = !m_cfg.trigs[m_edit_trig].accent;
-			m_ui_repaint = 1;
-			return 1;
-		case CKeyboard::CMD_TRIG_GLIDE:
-			m_cfg.trigs[m_edit_trig].glide = !m_cfg.trigs[m_edit_trig].glide;
-			m_ui_repaint = 1;
-			return 1;
-		case CKeyboard::CMD_TRIG_OCTAVE:
-			m_cfg.trigs[m_edit_trig].octave = !m_cfg.trigs[m_edit_trig].octave;
-			m_ui_repaint = 1;
-			return 1;
-		case CKeyboard::CMD_TRIG_CHORD:
-			m_cfg.trigs[m_edit_trig].chord= !m_cfg.trigs[m_edit_trig].chord;
-			m_ui_repaint = 1;
-			return 1;
-		case  CKeyboard::CMD_TRIGS:
-			m_ui_show_path = !m_ui_show_path;
-			m_ui_repaint = 1;
-			return 1;
+	byte ui_on_key(byte key_event) {
+		if(m_ui_show_path) {
+			switch(key_event) {
+			case CKeyboard::SHIFT|CKeyboard::KEY_B1:
+				m_cfg.trigs[m_edit_trig].enabled = !m_cfg.trigs[m_edit_trig].enabled;
+				m_ui_repaint = 1;
+				return 1;
+			}
+			return 0;
 		}
-		return 0;
+		else {
+			switch(key_event) {
+			case CKeyboard::KEY_B1:
+				m_cfg.trigs[m_edit_trig].enabled = !m_cfg.trigs[m_edit_trig].enabled;
+				m_ui_repaint = 1;
+				return 1;
+			case CKeyboard::KEY_B2:
+				m_cfg.trigs[m_edit_trig].accent = !m_cfg.trigs[m_edit_trig].accent;
+				m_ui_repaint = 1;
+				return 1;
+
+			case CKeyboard::KEY_B3:
+				if(m_cfg.trigs[m_edit_trig].glide == GLIDE_TIED) {
+					m_cfg.trigs[m_edit_trig].glide = GLIDE_NONE;
+				}
+				else {
+					m_cfg.trigs[m_edit_trig].glide = GLIDE_TIED;
+				}
+				m_ui_repaint = 1;
+				return 1;
+
+			case CKeyboard::KEY_B4:
+				if(m_cfg.trigs[m_edit_trig].glide == GLIDE_LONG) {
+					m_cfg.trigs[m_edit_trig].glide = GLIDE_NONE;
+				}
+				else {
+					m_cfg.trigs[m_edit_trig].glide = GLIDE_LONG;
+				}
+				m_ui_repaint = 1;
+				return 1;
+
+			case CKeyboard::KEY_B5:
+				if(m_cfg.trigs[m_edit_trig].shift == SHIFT_1) {
+					m_cfg.trigs[m_edit_trig].shift = SHIFT_NONE;
+				}
+				else {
+					m_cfg.trigs[m_edit_trig].shift = SHIFT_1;
+				}
+				m_ui_repaint = 1;
+				return 1;
+
+			case CKeyboard::KEY_B6:
+				if(m_cfg.trigs[m_edit_trig].shift == SHIFT_2) {
+					m_cfg.trigs[m_edit_trig].shift = SHIFT_NONE;
+				}
+				else {
+					m_cfg.trigs[m_edit_trig].shift = SHIFT_2;
+				}
+				m_ui_repaint = 1;
+				return 1;
+
+			case CKeyboard::KEY_B7:
+				if(m_cfg.trigs[m_edit_trig].shift == SHIFT_CHORD) {
+					m_cfg.trigs[m_edit_trig].shift = SHIFT_NONE;
+				}
+				else {
+					m_cfg.trigs[m_edit_trig].shift = SHIFT_CHORD;
+				}
+				m_ui_repaint = 1;
+				return 1;
+			}
+			return 0;
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
