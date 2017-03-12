@@ -23,6 +23,9 @@ static const char* c_oct_span[ARPTYPE_ENUM_MAX] = {"NONE", "2XOCT", "3XOCT", "4X
 static const char* c_seq_rate[SEQ_RATE_ENUM_MAX] = {"WHOLE", "1/2D", "1/2", "1/4D", "1/2T", "1/4", "1/8D", "1/4T", "1/8", "1/16D", "1/8T", "1/16", "1/16T", "1/32"};
 static const char* c_seq_mutate[SEQ_MUTATE_ENUM_MAX] = {"NONE", "INS HI", "INS LO", "3F1B", "4F2B"};
 
+static const char* c_chord_mode[CHORDMODE_ENUM_MAX] = {"DIRECT", "NAMED", "K:C", "K:C~", "K:C#", "K:C#~","K:D", "K:D~","K:D#", "K:D#~","K:E", "K:E~",
+		"K:F", "K:F~","K:F#", "K:F#~","K:G", "K:G~","K:G#", "K:G#~","K:A", "K:A~","K:A#", "K:A#~","K:B", "K:B~"};
+
 /*
 static const char* c_gate_len[GATE_ENUM_MAX] = {"OFF", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "FULL", "TIE"};
 static const char* c_midi_chan[CHAN_ENUM_MAX] = {"CH1", "CH2", "CH3", "CH4", "CH5", "CH6", "CH7", "CH8", "CH9", "CH10", "CH11", "CH12", "CH13", "CH14", "CH15", "CH16", "OMNI"};
@@ -45,8 +48,11 @@ static const INFO gate_long = { "GATE L", 0, 127};
 static const INFO shift1 = { "INTVL1", -24, 24};
 static const INFO shift2 = { "INTVL2", -24, 24};
 static const INFO chord_rate = { "CHRATE", 1,32};
+static const INFO chord_mode = { "CHMODE", 0, params::CHORDMODE_ENUM_MAX-1,c_chord_mode};
 static const INFO oct_shift = { "OCTAVE", -3,+3};
 static const INFO transpose = { "TXPOSE", -24,+24};
+
+
 
 
 const INFO *params::info(int param) {
@@ -65,6 +71,7 @@ const INFO *params::info(int param) {
 	case params::SHIFT2: return &shift2;
 
 	case params::CHORDRATE: return &chord_rate;
+	case params::CHORDMODE: return &chord_mode;
 	case params::OCT_SHIFT: return &oct_shift;
 	case params::TRANSPOSE: return &transpose;
 

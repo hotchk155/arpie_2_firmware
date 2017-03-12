@@ -263,18 +263,21 @@ public:
 					if(m_ui_context == CTX_TRIG) {
 						edit_param(params::ACC_VEL);
 					}
+					else if(m_ui_context == CTX_CHORD) {
+						edit_param(params::CHORDMODE);
+					}
 					break;
 				case CKeyboard::SHIFT|CKeyboard::KEY_B3:
 					if(m_ui_context == CTX_TRIG) {
 						edit_param(params::GATE);
 					}
+					else if(m_ui_context == CTX_CHORD) {
+						edit_param(params::CHORDRATE);
+					}
 					break;
 				case CKeyboard::SHIFT|CKeyboard::KEY_B4:
 					if(m_ui_context == CTX_TRIG) {
 						edit_param(params::GATE_LONG);
-					}
-					else if(m_ui_context == CTX_CHORD) {
-						edit_param(params::CHORDRATE);
 					}
 					break;
 				case CKeyboard::SHIFT|CKeyboard::KEY_B5:
@@ -467,6 +470,7 @@ public:
 		case params::SHIFT1:
 		case params::SHIFT2:
 		case params::CHORDRATE:
+		case params::CHORDMODE:
 		case params::OCT_SHIFT:
 		case params::TRANSPOSE:
 			m_param_edit.set_param(param);
@@ -508,6 +512,8 @@ public:
 			return m_chain[m_cur_chain].sequencer.m_cfg.shift_interval_2;
 		case params::CHORDRATE:
 			return m_chord_sequencer.get_rate();
+		case params::CHORDMODE:
+			return m_ui_chord.get_mode();
 		case params::OCT_SHIFT:
 			return m_chain[m_cur_chain].note_player.m_cfg.oct_shift;
 			break;
@@ -557,6 +563,9 @@ public:
 			break;
 		case params::CHORDRATE:
 			m_chord_sequencer.set_rate(value);
+			break;
+		case params::CHORDMODE:
+			m_ui_chord.set_mode(value);
 			break;
 		case params::OCT_SHIFT:
 			m_chain[m_cur_chain].note_player.m_cfg.oct_shift = value;

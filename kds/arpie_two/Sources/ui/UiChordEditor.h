@@ -20,15 +20,27 @@ class CUiChordEditor : public IUiComponent {
 protected:
 	CChordSequencer& m_seq;
 	byte m_edit_index:4;
-	byte m_chord_name:1;
+	byte m_mode;
 	byte m_edit_octave:2;
 public:
+	enum {
+		CHORD_DIRECT,
+		CHORD_NAME,
+		CHORD_FAMILY
+	};
 	//////////////////////////////////////////////////////////////////////////////////
 	CUiChordEditor(CChordSequencer& seq) : m_seq(seq) {
 		m_edit_index = 0;
 		m_edit_octave = 0;
+		m_mode = params::CHORDMODE_DIRECT;
 	}
-
+	byte get_mode() {
+		return m_mode;
+	}
+	void set_mode(byte mode) {
+		m_mode = mode;
+		m_seq.m_ui_repaint = 1;
+	}
 	//////////////////////////////////////////////////////////////////////////////////
 	virtual void ui_init() {
 	}
@@ -46,7 +58,7 @@ public:
 
 		// if we are in "chord name" mode we will try to identify the chord type
 		const char *chord_name = NULL;
-		if(m_chord_name) {
+		if(m_mode != CHORD_DIRECT) {
 			switch(chord.chord) {
 			case CChordSequencer::CHORD_MAJ: chord_name = ""; break;
 			case CChordSequencer::CHORD_MIN: chord_name = "~"; break;
@@ -162,10 +174,6 @@ public:
 			m_seq.m_cfg.chord[m_edit_index].shift = 0;
 			m_seq.m_ui_repaint = 1;
 		}
-		else if(key_event==(CKeyboard::SHIFT|CKeyboard::KEY_B2)) {
-			m_chord_name = !m_chord_name;
-			m_seq.m_ui_repaint = 1;
-		}
 		else if(key_event==(CKeyboard::SHIFT|CKeyboard::KEY_B6)) {
 			m_edit_octave = 0;
 			m_seq.m_ui_repaint = 1;
@@ -178,7 +186,7 @@ public:
 			m_edit_octave = 2;
 			m_seq.m_ui_repaint = 1;
 		}
-		else if(m_chord_name) {
+		else if(m_mode == params::CHORDMODE_NAMED) {
 			CChordSequencer::CHORD chord = m_seq.m_cfg.chord[m_edit_index];
 			switch(key_event) {
 			case CKeyboard::KEY_B1: chord.shift = 0; break;
@@ -210,8 +218,9 @@ public:
 			}
 			m_seq.m_cfg.chord[m_edit_index] = chord;
 			m_seq.m_ui_repaint = 1;
+			return 1;
 		}
-		else {
+		else if(m_mode == params::CHORDMODE_DIRECT) {
 
 			uint32_t mask;
 			switch(key_event) {
@@ -248,8 +257,62 @@ public:
 			mask <<= (12*m_edit_octave);
 			m_seq.m_cfg.chord[m_edit_index].chord ^= mask;
 			m_seq.m_ui_repaint = 1;
+			return 1;
 		}
-		return 1;
+		else {
+
+			byte mode = (m_mode - params::CHORDMODE_KEYC);
+
+
+				//MAJOR
+			CChordSequencer::CHORD chord;
+			if(0==(mode & 1)) {
+				switch(key_event) {
+				case CKeyboard::KEY_B1: chord.shift = 0; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_A1: chord.shift = 1; chord.chord = CChordSequencer::CHORD_MIN; break;
+				case CKeyboard::KEY_B2: chord.shift = 2; chord.chord = CChordSequencer::CHORD_MIN; break;
+				case CKeyboard::KEY_A2: chord.shift = 3; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_B3: chord.shift = 4; chord.chord = CChordSequencer::CHORD_MIN; break;
+				case CKeyboard::KEY_B4: chord.shift = 5; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_A3: chord.shift = 6; chord.chord = CChordSequencer::CHORD_DIM; break;
+				case CKeyboard::KEY_B5: chord.shift = 7; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_A4: chord.shift = 8; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_B6: chord.shift = 9; chord.chord = CChordSequencer::CHORD_MIN; break;
+				case CKeyboard::KEY_A5: chord.shift = 10; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_B7: chord.shift = 11; chord.chord = CChordSequencer::CHORD_DIM; break;
+				case CKeyboard::KEY_B8: chord.shift = 0; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				default:
+					return 0;
+				}
+			}
+			else {
+				switch(key_event) {
+				case CKeyboard::KEY_B1: chord.shift = 0; chord.chord = CChordSequencer::CHORD_MIN; break;
+				case CKeyboard::KEY_A1: chord.shift = 1; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_B2: chord.shift = 2; chord.chord = CChordSequencer::CHORD_DIM; break;
+				case CKeyboard::KEY_A2: chord.shift = 3; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_B3: chord.shift = 4; chord.chord = CChordSequencer::CHORD_MIN; break;
+				case CKeyboard::KEY_B4: chord.shift = 5; chord.chord = CChordSequencer::CHORD_MIN; break;
+				case CKeyboard::KEY_A3: chord.shift = 6; chord.chord = CChordSequencer::CHORD_DIM; break;
+				case CKeyboard::KEY_B5: chord.shift = 7; chord.chord = CChordSequencer::CHORD_MIN; break;
+				case CKeyboard::KEY_A4: chord.shift = 8; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_B6: chord.shift = 9; chord.chord = CChordSequencer::CHORD_MIN; break;
+				case CKeyboard::KEY_A5: chord.shift = 10; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_B7: chord.shift = 11; chord.chord = CChordSequencer::CHORD_MAJ; break;
+				case CKeyboard::KEY_B8: chord.shift = 0; chord.chord = CChordSequencer::CHORD_MIN; break;
+				default:
+					return 0;
+				}
+			}
+			chord.shift += (mode/2);
+			if(chord.shift > 12) {
+				chord.shift -= 12;
+			}
+			m_seq.m_cfg.chord[m_edit_index] = chord;
+			m_seq.m_ui_repaint = 1;
+			return 1;
+		}
+		return 0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////

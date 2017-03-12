@@ -22,7 +22,8 @@ class CDisplay {
 		SYM_MINOR,
 		SYM_PLUS,
 		SYM_DIM,
-		SYM_DOT
+		SYM_DOT,
+		SYM_COLON
 	};
 	static const byte m_digits[];
 	static const byte m_letters[];
@@ -100,6 +101,7 @@ class CDisplay {
 			case '+': map = &m_symbols[5*SYM_PLUS]; break;
 			case '^': map = &m_symbols[5*SYM_DIM]; break;
 			case '.': map = &m_symbols[5*SYM_DOT]; break;
+			case ':': map = &m_symbols[5*SYM_COLON]; break;
 			default:
 				return;
 			}
