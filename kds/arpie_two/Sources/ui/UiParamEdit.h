@@ -31,14 +31,19 @@ public:
 
 public:
 	void set_param(byte param) {
-		m_param = param;
-		m_info = params::info(param);
-		m_edit_in_progress = 0;
+		if(param != m_param) {
+			m_param = param;
+			m_info = params::info(param);
+			m_edit_in_progress = 0;
+		}
+		else {
+			m_edit_in_progress = !m_edit_in_progress;
+		}
 	}
 	void ui_init() {
+		m_edit_in_progress = 0;
 	}
 	void ui_done() {
-
 	}
 	void ui_render(uint32_t *raster, uint32_t *highlight) {
 		int value = params::get(m_param);

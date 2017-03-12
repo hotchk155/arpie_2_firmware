@@ -46,9 +46,10 @@ const INFO *info(int param);
 
 
 enum {
-	TRIGS,
-	SEQUENCE,
-	CHORD_EDIT,
+	TRIGS_UI,
+	PATH_UI,
+	CHORD_UI,
+
 	SEQ_RATE,
 	MIDI_IN_CHAN,
 	MIDI_OUT_CHAN,
@@ -63,8 +64,10 @@ enum {
 	GATE_LONG,
 	SHIFT1,
 	SHIFT2,
-	CHORDMODE,
 	CHORDRATE,
+
+	OCT_SHIFT,
+	TRANSPOSE,
 
 	ENUM_MAX
 };
@@ -176,11 +179,6 @@ enum {
 	SCALE_ADJUST_ENUM_MAX
 };
 
-enum {
-	CHORD_MODE_NAME,
-	CHORD_MODE_DIRECT,
-	CHORD_MODE_ENUM_MAX
-};
 
 }; // namespace params
 #endif /* SOURCES_INCLUDE_PARAMETERS_H_ */

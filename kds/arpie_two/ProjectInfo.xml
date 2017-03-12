@@ -84,7 +84,6 @@
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\arp\Params.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\arp\SequenceMutator.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\arp\Sequencer.h</PathName>
-      <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\arp\UiParamEdit.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\hal\Display.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\hal\Encoder.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\hal\Keyboard.h</PathName>
@@ -93,6 +92,11 @@
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\hal\MidiIn.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\hal\MidiOut.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\hal\i2c.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\ui\UiChordEditor.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\ui\UiParamEdit.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\ui\UiSeqPath.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\ui\UiSeqTrigs.h</PathName>
+      <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Sources\ui\UiTitle.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Static_Code\IO_Map\MKE02Z4.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Static_Code\PDD\ADC_PDD.h</PathName>
       <PathName>D:\GitHub\arpie_2_firmware\kds\arpie_two\Static_Code\PDD\CMP_PDD.h</PathName>

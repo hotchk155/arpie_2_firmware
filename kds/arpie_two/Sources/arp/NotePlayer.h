@@ -34,6 +34,8 @@ class CNotePlayer {
 public:
 	typedef struct {
 		byte chan;
+		char transpose;
+		char oct_shift;
 		byte scale_mode;
 		uint16_t scale_mask;
 		byte scale_root;
@@ -46,6 +48,8 @@ public:
 		m_note.num_pitches = 0;
 		m_midi_out = midi_out;
 		m_cfg.chan = chan;
+		m_cfg.transpose = 0;
+		m_cfg.oct_shift = 0;
 		set_scale_mode(params::SCALE_CHROMATIC);
 		set_scale_root(0);
 	}
@@ -98,7 +102,7 @@ public:
 	}
 	//////////////////////////////////////////////////////////////////////
 	// Stop all playing notes
-	void note_stop() {
+	void note_stop(ARP_NOTE *other) {
 		if(m_note.num_pitches) {
 			midi::MSG msg;
 			msg.type = midi::MSG_2PARAM;
@@ -108,8 +112,22 @@ public:
 			// stop the note playing.. we use convention of NOTE ON with zero
 			// velocity to turn a note off (allow efficient use of running status)
 			for(int i=0; i<m_note.num_pitches; ++i) {
-				msg.param1 = PITCH_2_MIDI(m_note.pitch[i]);
-				m_midi_out->msg(&msg);
+
+				// if another note is provided, we make sure that any notes we
+				// silence should not be playing
+				byte allow_pitch = 0;
+				if(other) {
+					for(int j=0; j<other->num_pitches; ++j) {
+						if(other->pitch[j] == m_note.pitch[i]) {
+							allow_pitch = 1;
+							break;
+						}
+					}
+				}
+				if(!allow_pitch) {
+					msg.param1 = PITCH_2_MIDI(m_note.pitch[i]);
+					m_midi_out->msg(&msg);
+				}
 			}
 			m_note.num_pitches = 0;
 		}
@@ -146,23 +164,62 @@ public:
 				n.m_pitch[n.m_num_pitches++] = note->m_pitch[i];
 			}
 		}*/
-		m_note = *note;
 
+		int transpose = 256 * (12 * (int)m_cfg.oct_shift + m_cfg.transpose);
+
+		// transpose the incoming note
+		ARP_NOTE new_note;
+		new_note.duration = note->duration;
+		new_note.tie = note->tie;
+		new_note.velocity = note->velocity;
+		new_note.num_pitches = 0;
+		for(int i=0; i<note->num_pitches; ++i) {
+			int pitch = note->pitch[i] + transpose;
+			if(pitch >= CArpNotes::MIN_PITCH && pitch <= CArpNotes::MAX_PITCH) {
+				new_note.pitch[new_note.num_pitches++] = pitch;
+			}
+		}
+
+		// if the OLD note is not tied then we need to make sure
+		// that it has stopped before we start the new note
+		if(!m_note.tie) {
+			note_stop(NULL);
+		}
+
+		// Now send out the NEW note
 		midi::MSG msg;
 		msg.type = midi::MSG_2PARAM;
 		msg.status = midi::CH_NOTE_ON | m_cfg.chan;
 		msg.param2 = note->velocity;
-		if(m_note.num_pitches && !m_note.tie) {
-			note_stop();
-		}
-		for(int i=0; i<note->num_pitches; ++i) {
-			msg.param1 = PITCH_2_MIDI(note->pitch[i]);
+		for(int i=0; i<new_note.num_pitches; ++i) {
+			// play new notes
+			msg.param1 = PITCH_2_MIDI(new_note.pitch[i]);
 			m_midi_out->msg(&msg);
 		}
-		if(m_note.num_pitches) {
-			note_stop();
+
+		// If the OLD note is tied then we need to stop
+		// pitches that are hanging over from that note
+		// but which are not in the new note
+		if(m_note.tie) {
+			note_stop(&new_note);
 		}
-		m_duration = m_note.duration;
+
+		// store the NEW note
+		m_note = new_note;
+		if(new_note.tie) {
+			// tied note
+			m_duration = 0;
+		}
+		else {
+			// non-tied
+			m_duration = new_note.duration;
+
+			// zero duration
+			if(!m_duration) {
+				note_stop(NULL);
+			}
+		}
+
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -170,7 +227,7 @@ public:
 	void on_24ppqn() {
 		if(m_duration > 0) {
 			if(--m_duration == 0) {
-				note_stop();
+				note_stop(NULL);
 			}
 		}
 	}
@@ -178,7 +235,7 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	// Midi channel accessor
 	void set_chan(byte chan) {
-		note_stop(); // kill any playing notes before switching channel
+		note_stop(NULL); // kill any playing notes before switching channel
 		m_cfg.chan = chan&0x0F;
 	}
 	byte get_chan() {

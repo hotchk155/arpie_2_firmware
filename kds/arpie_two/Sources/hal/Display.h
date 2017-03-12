@@ -232,6 +232,13 @@ public:
 			format_char(raster, *sz++, pos++);
 		}
 	}
+	void format_8x8(const byte *b, uint32_t *raster, int pos) {
+
+		for(byte i=0; i<8; ++i) {
+			raster[i] |= (((uint32_t)b[i]) << (16-8*pos));
+		}
+
+	}
 
 	/*
 	void text(const byte *sz) {

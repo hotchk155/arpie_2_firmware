@@ -29,7 +29,7 @@ public:
 
 	void init() {
 		m_cfg.arp_type = params::ARPTYPE_UP;
-		m_cfg.octaves = 3;
+		m_cfg.octaves = 1;
 	}
 
 	///////////////////////////////////////////////////////////////

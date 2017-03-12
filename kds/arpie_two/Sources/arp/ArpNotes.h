@@ -297,6 +297,7 @@ public:
 		CArpNotes t(*this);
 		t.to_chord();
 		memcpy(result->pitch, t.m_cfg.pitch, sizeof(result->pitch));
+
 		if(t.m_cfg.num_pitches > ARP_NOTE::MAX_PITCHES) {
 			result->num_pitches = ARP_NOTE::MAX_PITCHES;
 		}

@@ -42,8 +42,6 @@ extern uint32_t g_millis;
 #include "ArpNotes.h"
 #include "Params.h"
 #include "Interfaces.h"
-#include "UiParamEdit.h"
-#include "UiTitle.h"
 #include "MidiIn.h"
 #include "MidiOut.h"
 #include "NotePlayer.h"
@@ -52,6 +50,11 @@ extern uint32_t g_millis;
 #include "ChordSequencer.h"
 #include "ArpeggioBasic.h"
 #include "SequenceMutator.h"
+#include "UiParamEdit.h"
+#include "UiTitle.h"
+#include "UiSeqPath.h"
+#include "UiSeqTrigs.h"
+#include "UiChordEditor.h"
 
 class CArpie : public IParams {
 
@@ -59,7 +62,7 @@ class CArpie : public IParams {
 		NUM_CHAINS = 2
 	};
 	enum {
-		CTX_ARP,
+		CTX_PATH,
 		CTX_TRIG,
 		CTX_CHORD
 	};
@@ -71,11 +74,12 @@ class CArpie : public IParams {
 		CArpeggioBasic arpeggio;
 		CSequenceMutator mutator;
 		short notes_ver;
+		byte run_sequencers:1;
 	} ARPCHAIN;
 
 	ARPCHAIN m_chain[NUM_CHAINS];
-	byte m_cur_chain;
-	byte m_ui_context;
+	byte m_cur_chain:2;
+	byte m_ui_context:2;
 
 	CEncoder m_encoder;
 	CClockInternal m_clock_internal;
@@ -85,16 +89,21 @@ class CArpie : public IParams {
 	CChordSequencer m_chord_sequencer;
 	CUIParamEdit m_param_edit;
 	CUiTitle m_title;
+	CUiSeqPath m_ui_path;
+	CUiSeqTrigs m_ui_trigs;
+	CUiChordEditor m_ui_chord;
 	IUiComponent *m_ui;
 
 
 	volatile byte m_ticked;
 	byte m_key_modifiers;
+	byte m_last_keypress;
 	byte m_param;
 	byte m_count_24ppqn;
 
 public:
-	CArpie() {
+	CArpie() :
+		m_ui_chord(m_chord_sequencer) {
 		params::g_params = this;
 	}
 
@@ -112,23 +121,46 @@ public:
 		chain->mutator.init();
 		chain->notes_ver = -1;
 		chain->note_provider = &m_chord_sequencer;
+		chain->run_sequencers = 0;
+
 	}
 
-	void toggle_chain() {
-		if(++m_cur_chain >= NUM_CHAINS) {
-			m_cur_chain = 0;
+	void show_chain() {
+		if(m_cur_chain == 0) {
+			m_title.m_mode = m_chain[m_cur_chain].run_sequencers? CUiTitle::ARP_A_PLAY : CUiTitle::ARP_A_PAUSE;
 		}
-		CLeds::instance().ab_led(m_cur_chain);
-		m_title.m_mode = (m_cur_chain == 0) ? CUiTitle::ARP_A : CUiTitle::ARP_B;
+		else {
+			m_title.m_mode = m_chain[m_cur_chain].run_sequencers? CUiTitle::ARP_B_PLAY : CUiTitle::ARP_B_PAUSE;
+		}
+		if(m_ui) {
+			m_ui->ui_done();
+		}
 		m_ui = &m_title;
+		update_display();
+		CLeds::instance().ab_led(m_cur_chain);
+	}
+	void show_main_display() {
+		switch(m_ui_context) {
+		case CTX_CHORD:
+			edit_param(params::CHORD_UI);
+			break;
+		case CTX_PATH:
+			edit_param(params::PATH_UI);
+			break;
+		case CTX_TRIG:
+			edit_param(params::TRIGS_UI);
+			break;
+		}
 	}
 
 	void init() {
 		for(int i=0; i<NUM_CHAINS; ++i) {
 			init_chain(&m_chain[i], i);
 		}
+		m_chain[0].run_sequencers = 1;
 		m_ticked = 0;
 		m_key_modifiers = 0;
+		m_last_keypress = 0;
 		m_count_24ppqn = 0;
 		m_cur_chain = 0;
 		m_midi_in.listen();
@@ -136,10 +168,12 @@ public:
 		m_chord_catcher_midi.init();
 		//m_chord_catcher_midi.test();
 		CDisplay::instance().init();
-		m_param = params::SEQUENCE;
-		m_ui_context = CTX_ARP;
+		m_param = params::PATH_UI;
+		m_ui_context = CTX_PATH;
 		m_title.m_mode = CUiTitle::TITLE1;
 		m_ui = &m_title;
+		m_ui_path.set_sequencer(&m_chain[0].sequencer);
+		m_ui_trigs.set_sequencer(&m_chain[0].sequencer);
 		update_display();
 	}
 
@@ -155,11 +189,12 @@ public:
 	void on_key(byte key, byte modifiers) {
 
 		if(key & CKeyboard::KEY_RELEASE) {
-			switch(key & ~CKeyboard::KEY_RELEASE) {
-			case CKeyboard::KEY_D2: edit_param(m_param); break;
-			default: return;
+			key &= ~CKeyboard::KEY_RELEASE;
+			if(key == CKeyboard::KEY_D1 && m_ui == &m_title) {
+				edit_param(m_param);
+				update_display();
+				m_last_keypress = 0;
 			}
-			update_display();
 		}
 		else {
 			byte key_event = key;
@@ -175,24 +210,44 @@ public:
 
 				//////////////////////////////////////////////////////////////
 				// ROW B
-				case CKeyboard::KEY_B2:
-					if(m_ui_context == CTX_ARP) {
+				case CKeyboard::KEY_B1:
+					if(m_ui_context == CTX_PATH) {
 						edit_param(params::ARP_TYPE);
 					}
 					break;
-				case CKeyboard::KEY_B3:
-					if(m_ui_context == CTX_ARP) {
+				case CKeyboard::KEY_B2:
+					if(m_ui_context == CTX_PATH) {
 						edit_param(params::OCT_SPAN);
 					}
 					break;
-				case CKeyboard::KEY_B4:
-					if(m_ui_context == CTX_ARP) {
+				case CKeyboard::KEY_B3:
+					if(m_ui_context == CTX_PATH) {
 						edit_param(params::SEQ_MUTATE);
 					}
 					break;
+				case CKeyboard::KEY_B4:
+					if(m_ui_context == CTX_PATH) {
+						edit_param(params::OCT_SHIFT);
+					}
+					break;
 				case CKeyboard::KEY_B5:
-					if(m_ui_context == CTX_ARP) {
+					if(m_ui_context == CTX_PATH) {
+						edit_param(params::TRANSPOSE);
+					}
+					break;
+				case CKeyboard::KEY_B6:
+					if(m_ui_context == CTX_PATH) {
 						edit_param(params::SEQ_RATE);
+					}
+					break;
+				case CKeyboard::KEY_B7:
+					if(m_ui_context == CTX_PATH) {
+						edit_param(params::GATE);
+					}
+					break;
+				case CKeyboard::KEY_B8:
+					if(m_ui_context == CTX_PATH) {
+						edit_param(params::VEL);
 					}
 					break;
 
@@ -207,9 +262,6 @@ public:
 				case CKeyboard::SHIFT|CKeyboard::KEY_B2:
 					if(m_ui_context == CTX_TRIG) {
 						edit_param(params::ACC_VEL);
-					}
-					else if(m_ui_context == CTX_CHORD) {
-						edit_param(params::CHORDMODE);
 					}
 					break;
 				case CKeyboard::SHIFT|CKeyboard::KEY_B3:
@@ -247,29 +299,46 @@ public:
 
 				//////////////////////////////////////////////////////////////
 				// ROW D
-				case CKeyboard::KEY_D2:
-					toggle_chain();
+				case CKeyboard::SHIFT|CKeyboard::KEY_D1:
+					// ignore shift
 					break;
 				case CKeyboard::KEY_D3:
 					m_ui_context = CTX_CHORD;
-					edit_param(params::CHORD_EDIT);
+					show_main_display();
 					break;
 				case CKeyboard::KEY_D4:
-					m_ui_context = CTX_ARP;
-					edit_param(params::SEQUENCE);
+					m_ui_context = CTX_PATH;
+					show_main_display();
 					break;
 				case CKeyboard::KEY_D5:
 					m_ui_context = CTX_TRIG;
-					edit_param(params::TRIGS);
+					show_main_display();
 					break;
-
-				default: return;
+				case CKeyboard::SHIFT|CKeyboard::KEY_D2:
+				case CKeyboard::SHIFT|CKeyboard::KEY_D3:
+					m_cur_chain = (key_event==(CKeyboard::SHIFT|CKeyboard::KEY_D2))? 0:1;
+					if(m_last_keypress == key_event) {
+						m_chain[m_cur_chain].run_sequencers = !m_chain[m_cur_chain].run_sequencers;
+					}
+					show_chain();
+					break;
+				default:
+					show_main_display();
+					break;
 				}
-				update_display();
 			}
+			m_last_keypress = key_event;
 		}
 	}
 
+	void run_title() {
+		switch(m_title.m_mode) {
+		case CUiTitle::TITLE1: m_title.m_mode=CUiTitle::TITLE2; break;
+		case CUiTitle::TITLE2: m_title.m_mode=CUiTitle::TITLE3; break;
+		case CUiTitle::TITLE3: edit_param(params::PATH_UI); break;
+		}
+		update_display();
+	}
 	/////////////////////////////////////////////////////////////////////////
 	void run_tasks() {
 
@@ -280,7 +349,9 @@ public:
 				m_count_24ppqn = 0;
 				CLeds::instance().pulse_clock();
 			}
-			m_chord_sequencer.on_24ppqn();
+			if(m_chain[0].run_sequencers || m_chain[1].run_sequencers) {
+				m_chord_sequencer.on_24ppqn();
+			}
 		}
 		CLeds::instance().on_tick();
 
@@ -295,7 +366,9 @@ public:
 
 			if(is_24ppqn) {
 				chain->note_player.on_24ppqn();
-				chain->sequencer.on_24ppqn();
+				if(chain->run_sequencers) {
+					chain->sequencer.on_24ppqn();
+				}
 			}
 		}
 
@@ -319,7 +392,13 @@ public:
 				}
 				on_key(key, m_key_modifiers);
 			}
+			if(!(g_millis & 0x1FF) && (m_ui == &m_title)) {
+				run_title();
+			}
 		}
+
+
+
 
 		if(m_ui->ui_needs_repaint()) {
 			update_display();
@@ -362,20 +441,18 @@ public:
 
 	int edit_param(int param) {
 		m_param = param;
-		if(m_ui) {
-			m_ui->ui_done();
-		}
+		IUiComponent *new_ui = m_ui;
 		switch(param) {
-		case params::SEQUENCE:
-			m_chain[m_cur_chain].sequencer.m_ui_show_path = 1;
-			m_ui = &m_chain[m_cur_chain].sequencer;
+		case params::PATH_UI:
+			m_ui_path.set_sequencer(&m_chain[m_cur_chain].sequencer);
+			new_ui = &m_ui_path;
 			break;
-		case params::TRIGS:
-			m_chain[m_cur_chain].sequencer.m_ui_show_path = 0;
-			m_ui = &m_chain[m_cur_chain].sequencer;
+		case params::TRIGS_UI:
+			m_ui_trigs.set_sequencer(&m_chain[m_cur_chain].sequencer);
+			new_ui = &m_ui_trigs;
 			break;
-		case params::CHORD_EDIT:
-			m_ui = &m_chord_sequencer;
+		case params::CHORD_UI:
+			new_ui = &m_ui_chord;
 			break;
 
 		case params::BPM:
@@ -389,13 +466,21 @@ public:
 		case params::GATE_LONG:
 		case params::SHIFT1:
 		case params::SHIFT2:
-		case params::CHORDMODE:
 		case params::CHORDRATE:
+		case params::OCT_SHIFT:
+		case params::TRANSPOSE:
 			m_param_edit.set_param(param);
-			m_ui = &m_param_edit;
+			new_ui = &m_param_edit;
 			break;
 		}
-		m_ui->ui_init();
+		if(new_ui != m_ui) {
+			if(m_ui) {
+				m_ui->ui_done();
+			}
+			m_ui = new_ui;
+			m_ui->ui_init();
+		}
+		update_display();
 	}
 	int get_param(int param) {
 		switch(param) {
@@ -421,10 +506,14 @@ public:
 			return m_chain[m_cur_chain].sequencer.m_cfg.shift_interval_1;
 		case params::SHIFT2:
 			return m_chain[m_cur_chain].sequencer.m_cfg.shift_interval_2;
-		case params::CHORDMODE:
-			return m_chord_sequencer.get_edit_mode();
 		case params::CHORDRATE:
 			return m_chord_sequencer.get_rate();
+		case params::OCT_SHIFT:
+			return m_chain[m_cur_chain].note_player.m_cfg.oct_shift;
+			break;
+		case params::TRANSPOSE:
+			return m_chain[m_cur_chain].note_player.m_cfg.transpose;
+			break;
 
 		}
 	}
@@ -466,11 +555,15 @@ public:
 		case params::SHIFT2:
 			m_chain[m_cur_chain].sequencer.m_cfg.shift_interval_2 = value;
 			break;
-		case params::CHORDMODE:
-			m_chord_sequencer.set_edit_mode(value);
-			break;
 		case params::CHORDRATE:
 			m_chord_sequencer.set_rate(value);
+			break;
+		case params::OCT_SHIFT:
+			m_chain[m_cur_chain].note_player.m_cfg.oct_shift = value;
+			break;
+		case params::TRANSPOSE:
+			m_chain[m_cur_chain].note_player.m_cfg.transpose = value;
+			break;
 		}
 	}
 };

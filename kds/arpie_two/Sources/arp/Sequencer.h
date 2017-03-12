@@ -15,14 +15,13 @@
 #ifndef SOURCES_SEQUENCER_H_
 #define SOURCES_SEQUENCER_H_
 
-class CSequencer : public IUiComponent {
-friend class CSequencerUiPath;
+class CSequencer  {
+friend class CUiSeqPath;
+friend class CUiSeqTrigs;
 
 	byte m_ui_repaint:1;
+	byte m_seq_changed:1;
 	byte m_edit_trig;
-//	byte m_flags;
-
-
 	CArpNotes *m_seq;
 	CNotePlayer *m_note_player;
 
@@ -34,9 +33,6 @@ friend class CSequencerUiPath;
 
 	byte m_tick_count;
 
-	enum {
-		PATH_LEN = 16
-	};
 
 	enum {
 		SHIFT_NONE,
@@ -51,15 +47,7 @@ friend class CSequencerUiPath;
 		GLIDE_TIED
 	};
 
-	// the stored path for display - each element in the
-	// array is the row number for the path in that column
-	char m_path[PATH_LEN];
-
 public:
-	enum {
-		UI_TRIGS,
-		UI_PATH
-	};
 	enum {
 		MAX_TRIG = 16
 	};
@@ -98,12 +86,11 @@ public:
 		char shift_interval_2;
 	} CONFIG;
 	CONFIG m_cfg;
-	byte m_ui_show_path:1;
-
 
 	CSequencer() {
 		m_seq = NULL;
 		m_note_player = NULL;
+		m_edit_trig = 0;
 	}
 
 	void init(CArpNotes *seq, CNotePlayer *note_player) {
@@ -123,36 +110,34 @@ public:
 
 		m_trig_index = 0;
 		m_index = 0;
-		m_edit_trig = 0;
 		m_ui_repaint = 0;
-		m_ui_show_path = 0;
 
-		prepare_path();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
 	void on_sequence_change() {
-		prepare_path();
+		m_seq_changed = 1;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
 	void on_24ppqn() {
 		if(!m_tick_count && m_seq->len()) {
 			m_trig_index = m_index % m_cfg.num_trigs;
+			int seq_index = m_index % m_seq->len();
 			if(m_cfg.trigs[m_trig_index].enabled) {
 				ARP_NOTE note;
-				switch(m_cfg.trigs[m_trig_index].glide ) {
+				switch(m_cfg.trigs[m_trig_index].shift ) {
 				case SHIFT_1:
-					m_seq->get_note(m_index % m_seq->len(),m_cfg.shift_interval_1,&note);
+					m_seq->get_note(seq_index,m_cfg.shift_interval_1,&note);
 					break;
 				case SHIFT_2:
-					m_seq->get_note(m_index % m_seq->len(),m_cfg.shift_interval_2,&note);
+					m_seq->get_note(seq_index,m_cfg.shift_interval_2,&note);
 					break;
 				case SHIFT_CHORD:
 					m_seq->get_chord(&note);
 					break;
 				case SHIFT_NONE:
-					m_seq->get_note(m_index % m_seq->len(),0,&note);
+					m_seq->get_note(seq_index,0,&note);
 					break;
 				}
 
@@ -166,34 +151,21 @@ public:
 
 				switch(m_cfg.trigs[m_trig_index].glide) {
 					case GLIDE_LONG:
-						note.duration = (m_cfg.long_gate * m_cfg.rate)/128;
+						note.duration = (m_cfg.long_gate * m_cfg.rate)/127;
 						break;
 					case GLIDE_TIED:
 						note.tie = 1;
 						break;
 					case GLIDE_NONE:
 					default:
-						note.duration = (m_cfg.normal_gate * m_cfg.rate)/128;
-						break;
-				};
-
-				switch(m_cfg.trigs[m_trig_index].shift) {
-					case GLIDE_LONG:
-						note.duration = (m_cfg.long_gate * m_cfg.rate)/128;
-						break;
-					case GLIDE_TIED:
-						note.tie = 1;
-						break;
-					case GLIDE_NONE:
-					default:
-						note.duration = (m_cfg.normal_gate * m_cfg.rate)/128;
+						note.duration = (m_cfg.normal_gate * m_cfg.rate)/127;
 						break;
 				};
 
 				m_note_player->note_start(&note);
 			}
 			if(m_trig_index == 0) {
-				prepare_path();
+				m_seq_changed = 1;
 			}
 			m_ui_repaint = 1;
 			++m_index;
@@ -205,321 +177,6 @@ public:
 		}
 	}
 
-	///////////////////////////////////////////////////////////////////////////////
-	void ui_init() {
-		prepare_path();
-	}
-	///////////////////////////////////////////////////////////////////////////////
-	void ui_done() {
-	}
-
-	///////////////////////////////////////////////////////////////////////////////
-	// method to prepare the "path" for the path mode UI
-	void ui_render(uint32_t *raster, uint32_t *highlight) {
-
-		///////////////////////////////////////////////////////////////////////////////
-		// PATH MODE
-		if(m_ui_show_path) {
-
-			uint32_t raster_mask = 0x080000;
-
-			// vertical shift scrolls the display down if the active
-			// step would be off the top
-			char yorg = 5*((4+m_path[m_trig_index]-6)/5);
-			if(yorg < 0) {
-				yorg = 0;
-			}
-
-			for(byte x=0; x<PATH_LEN; ++x) {
-
-				char row = 6-m_path[x]+yorg;
-				if(row >= 0 && row < 7) {
-					if(x == m_trig_index) {
-						highlight[row] |= raster_mask;
-						raster[row] |= raster_mask;
-					}
-					else if(m_cfg.trigs[x].enabled) {
-						raster[row] |= raster_mask;
-					}
-					else {
-						highlight[row] |= raster_mask;
-
-					}
-				}
-
-				if(x < m_cfg.num_trigs) {
-					if(m_cfg.trigs[x].enabled) {
-						raster[7] |= raster_mask;
-						if(x == m_edit_trig) {
-							highlight[7] |= raster_mask;
-						}
-					}
-					else {
-						highlight[7] |= raster_mask;
-						if(x == m_edit_trig) {
-							raster[7] |= raster_mask;
-						}
-					}
-				}
-				raster_mask >>= 1;
-			}
-		}
-		///////////////////////////////////////////////////////////////////////////////
-		// TRIGS MODE
-		else {
-			byte which_trig = 0;
-
-			// two rows...
-			for(byte row = 0; row < 2; row ++) {
-				 //                    76543210765432107654321076543210
-				uint32_t both_bits = 0b00000000110000000000000000000000;
-				uint32_t left_bit =  0b00000000100000000000000000000000;
-				uint32_t right_bit = 0b00000000010000000000000000000000;
-
-				//... of 8 columns
-				for(byte col = 0; col < 8; ++col) {
-
-					if(which_trig < m_cfg.num_trigs) {
-
-						if(m_cfg.trigs[which_trig].enabled) { // enabled trigger
-
-							// normal colour
-							raster[1] |= both_bits;
-							raster[2] |= both_bits;
-
-							if(m_cfg.trigs[which_trig].accent) {
-								raster[0] |= left_bit;
-							}
-							if(m_cfg.trigs[which_trig].shift) {
-								raster[0] |= right_bit;
-							}
-							if(m_cfg.trigs[which_trig].glide) {
-								raster[2] |= right_bit>>1;
-							}
-
-							// highlight the current play trigger
-							if(which_trig == m_trig_index) {
-								highlight[1] |= left_bit;
-							}
-							// highlight the current edit trigger
-							if(which_trig == m_edit_trig) {
-								highlight[2] |= both_bits;
-							}
-						}
-						else { // disabled trigger
-
-							// "bright black" shows its disabled
-							highlight[1] |= both_bits;
-							highlight[2] |= both_bits;
-
-							// highlight the current play trigger
-							if(which_trig == m_trig_index) {
-								raster[1] |= left_bit;
-							}
-							// highlight the current edit trigger
-							if(which_trig == m_edit_trig) {
-								raster[2] |= both_bits;
-							}
-						}
-					}
-
-					both_bits >>= 3;
-					left_bit >>= 3;
-					right_bit >>= 3;
-
-					++which_trig;
-				}
-				raster+=3;
-				highlight+=3;
-			}
-		}
-	}
-
-	///////////////////////////////////////////////////////////////////////////////
-	byte ui_needs_repaint() {
-		byte r  = m_ui_repaint;
-		m_ui_repaint = 0;
-		return r;
-	}
-
-	///////////////////////////////////////////////////////////////////////////////
-	byte ui_on_key(byte key_event) {
-		if(m_ui_show_path) {
-			switch(key_event) {
-			case CKeyboard::SHIFT|CKeyboard::KEY_B1:
-				m_cfg.trigs[m_edit_trig].enabled = !m_cfg.trigs[m_edit_trig].enabled;
-				m_ui_repaint = 1;
-				return 1;
-			}
-			return 0;
-		}
-		else {
-			switch(key_event) {
-			case CKeyboard::KEY_B1:
-				m_cfg.trigs[m_edit_trig].enabled = !m_cfg.trigs[m_edit_trig].enabled;
-				m_ui_repaint = 1;
-				return 1;
-			case CKeyboard::KEY_B2:
-				m_cfg.trigs[m_edit_trig].accent = !m_cfg.trigs[m_edit_trig].accent;
-				m_ui_repaint = 1;
-				return 1;
-
-			case CKeyboard::KEY_B3:
-				if(m_cfg.trigs[m_edit_trig].glide == GLIDE_TIED) {
-					m_cfg.trigs[m_edit_trig].glide = GLIDE_NONE;
-				}
-				else {
-					m_cfg.trigs[m_edit_trig].glide = GLIDE_TIED;
-				}
-				m_ui_repaint = 1;
-				return 1;
-
-			case CKeyboard::KEY_B4:
-				if(m_cfg.trigs[m_edit_trig].glide == GLIDE_LONG) {
-					m_cfg.trigs[m_edit_trig].glide = GLIDE_NONE;
-				}
-				else {
-					m_cfg.trigs[m_edit_trig].glide = GLIDE_LONG;
-				}
-				m_ui_repaint = 1;
-				return 1;
-
-			case CKeyboard::KEY_B5:
-				if(m_cfg.trigs[m_edit_trig].shift == SHIFT_1) {
-					m_cfg.trigs[m_edit_trig].shift = SHIFT_NONE;
-				}
-				else {
-					m_cfg.trigs[m_edit_trig].shift = SHIFT_1;
-				}
-				m_ui_repaint = 1;
-				return 1;
-
-			case CKeyboard::KEY_B6:
-				if(m_cfg.trigs[m_edit_trig].shift == SHIFT_2) {
-					m_cfg.trigs[m_edit_trig].shift = SHIFT_NONE;
-				}
-				else {
-					m_cfg.trigs[m_edit_trig].shift = SHIFT_2;
-				}
-				m_ui_repaint = 1;
-				return 1;
-
-			case CKeyboard::KEY_B7:
-				if(m_cfg.trigs[m_edit_trig].shift == SHIFT_CHORD) {
-					m_cfg.trigs[m_edit_trig].shift = SHIFT_NONE;
-				}
-				else {
-					m_cfg.trigs[m_edit_trig].shift = SHIFT_CHORD;
-				}
-				m_ui_repaint = 1;
-				return 1;
-			}
-			return 0;
-		}
-	}
-
-	///////////////////////////////////////////////////////////////////////////////
-	void ui_on_encoder(char delta, byte modifiers) {
-		if(delta > 0) {
-			if(modifiers & CKeyboard::SHIFT_MODIFIER) {
-				if(m_cfg.num_trigs < MAX_TRIG) {
-					++m_cfg.num_trigs;
-					prepare_path();
-				}
-				m_edit_trig = m_cfg.num_trigs-1;
-				m_ui_repaint = 1;
-
-			}
-			else if(m_edit_trig < m_cfg.num_trigs - 1) {
-				++m_edit_trig;
-				m_ui_repaint = 1;
-			}
-		}
-		else if(delta < 0) {
-			if(modifiers & CKeyboard::SHIFT_MODIFIER) {
-				if(m_cfg.num_trigs >  1) {
-					--m_cfg.num_trigs;
-					prepare_path();
-				}
-				m_edit_trig = m_cfg.num_trigs-1;
-				m_ui_repaint = 1;
-			}
-			else if(m_edit_trig > 0) {
-				--m_edit_trig;
-				m_ui_repaint = 1;
-			}
-		}
-	}
-
-protected:
-	///////////////////////////////////////////////////////////////////////////////
-	// method to prepare the "path" for the path mode UI
-	void prepare_path() {
-
-
-		byte i,j,k;
-		memset(m_path,-1,sizeof(m_path));
-		// we need at least one note before we can display anything
-		if(m_seq->len() && m_cfg.num_trigs) {
-
-			// get the position in the sequence of the first column
-			byte base_index = (m_cfg.num_trigs * (m_index / m_cfg.num_trigs)) % m_seq->len();
-			byte seq_index = base_index;
-
-			// build a list of all the unique notes we need to display,
-			// sorted into decending order
-			byte num_unique_notes = 0;
-			byte unique_notes[PATH_LEN];
-			for(i=0; i<m_cfg.num_trigs; ++i) {
-				byte note = m_seq->midi_note(seq_index);
-
-				for(j=0; j<num_unique_notes; ++j) {
-					if(note <= unique_notes[j]) {
-						break;
-					}
-				}
-				if(j==num_unique_notes) {
-					// highest note value - add to end of the list
-					unique_notes[num_unique_notes++] = note;
-				}
-				else if(note < unique_notes[j]) {
-					// need to insert the note, shifting others up
-					++num_unique_notes;
-					for(k=num_unique_notes; k>j; --k) {
-						unique_notes[k] = unique_notes[k-1];
-					}
-					unique_notes[j] = note;
-				}
-				if(++seq_index >= m_seq->len()) {
-					seq_index = 0;
-				}
-				if(seq_index == base_index) {
-					// we've wrapped back to start of sequence so no point
-					// processing the same notes again
-					break;
-				}
-			}
-
-			// map notes into the column
-			seq_index = base_index;
-			for(i=0; i<PATH_LEN; ++i ) {
-
-				// map midi note to row
-				byte note = m_seq->midi_note(seq_index);
-				for(j=0; j<num_unique_notes;++j) {
-					if(note == unique_notes[j]) {
-						m_path[i] = j;
-						break;
-					}
-				}
-
-				if(++seq_index >= m_seq->len()) {
-					seq_index = 0;
-				}
-
-			}
-		}
-	}
 
 };
 
